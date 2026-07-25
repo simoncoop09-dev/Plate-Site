@@ -1892,11 +1892,43 @@ function buildPlan(){
     }
     return pump().then(function(full){
       full = full.replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
+      var a0 = full.indexOf('{');
+      if (a0 > 0) full = full.slice(a0);
       if (full.charAt(0) !== '{') full = '{' + full;
+
+      function repairJson(s){
+        var last = s.lastIndexOf('}');
+        if (last === -1) return null;
+        s = s.slice(0, last + 1);
+        var stack = [], inStr = false, escN = false;
+        for (var i = 0; i < s.length; i++){
+          var ch = s[i];
+          if (escN) { escN = false; continue; }
+          if (ch === '\\') { escN = true; continue; }
+          if (ch === '"') { inStr = !inStr; continue; }
+          if (inStr) continue;
+          if (ch === '{' || ch === '[') stack.push(ch);
+          else if (ch === '}' || ch === ']') stack.pop();
+        }
+        while (stack.length){
+          s += (stack.pop() === '{' ? '}' : ']');
+        }
+        try { return JSON.parse(s); } catch(e){ return null; }
+      }
+
       var plan = null;
-      try { plan = JSON.parse(full); } catch(e){
-        var a = full.indexOf('{'), b = full.lastIndexOf('}');
-        if (a !== -1 && b > a) { try { plan = JSON.parse(full.slice(a, b + 1)); } catch(e2){} }
+      try { plan = JSON.parse(full); } catch(e){}
+      if (!plan) {
+        var b = full.lastIndexOf('}');
+        if (b > 0) { try { plan = JSON.parse(full.slice(0, b + 1)); } catch(e2){} }
+      }
+      if (!plan) plan = repairJson(full);
+
+      if (plan && Array.isArray(plan.days)) {
+        // keep only days that actually have meals (a truncated tail may be partial)
+        plan.days = plan.days.filter(function(d){
+          return d && Array.isArray(d.meals) && d.meals.length > 0;
+        });
       }
       if (!plan || !Array.isArray(plan.days) || !plan.days.length) {
         throw new Error('Your plan came back garbled. Please try once more.');
