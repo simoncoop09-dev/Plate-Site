@@ -1740,6 +1740,12 @@ var AISLE_ORDER = ['Produce','Meat & Seafood','Dairy & Eggs','Bakery','Frozen','
 // Find an ASIN on any Amazon product page (in the URL after /dp/, e.g. amazon.com/dp/B01H5PW1S0).
 // Items not in this map still get a per-item "find on Amazon Fresh" link automatically.
 var AMAZON_TAG = '';
+var instacartEnabled = false;
+if (location.protocol === 'http:' || location.protocol === 'https:') {
+  fetch('/api/instacart').then(function(r){ return r.json(); })
+    .then(function(d){ instacartEnabled = !!(d && d.enabled); })
+    .catch(function(){});
+}
 var AMAZON_ASIN_MAP = {
   // 'chicken breast': 'B0EXAMPLE1',
   // 'greek yogurt':   'B0EXAMPLE2',
@@ -2107,8 +2113,11 @@ function renderGrocery(){
   });
 
   var html = '<div class="grocery-actions">' +
+    (instacartEnabled
+      ? '<button class="btn btn-primary" id="gInstacart" type="button">Shop with Instacart</button>'
+      : '') +
     (mappedAsins.length
-      ? '<button class="btn btn-primary" id="gAmzCart" type="button">Amazon cart (' + mappedAsins.length + ' items)</button>'
+      ? '<button class="btn ' + (instacartEnabled ? 'btn-secondary' : 'btn-primary') + '" id="gAmzCart" type="button">Amazon cart (' + mappedAsins.length + ' items)</button>'
       : '') +
     '<button class="btn btn-secondary" id="gCopy" type="button">Copy list</button>' +
     '<button class="btn btn-secondary" id="gReset" type="button">Uncheck all</button>' +
@@ -2133,6 +2142,33 @@ function renderGrocery(){
   });
 
   groceryPane.innerHTML = html;
+
+  var icBtn = document.getElementById('gInstacart');
+  if (icBtn) icBtn.addEventListener('click', function(){
+    if (icBtn.disabled) return;
+    icBtn.disabled = true;
+    icBtn.textContent = 'Building your cart...';
+    var items = [];
+    Object.keys(map).forEach(function(k){
+      if (!groceryChecked[k]) items.push({ name: map[k].item, quantity: 1 });
+    });
+    fetch('/api/instacart', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: items })
+    })
+    .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, d: d }; }); })
+    .then(function(r){
+      if (!r.ok || !r.d.url) throw new Error((r.d && r.d.error) || 'Could not build the cart.');
+      window.open(r.d.url, '_blank', 'noopener');
+      icBtn.textContent = 'Shop with Instacart';
+      icBtn.disabled = false;
+    })
+    .catch(function(e){
+      icBtn.textContent = (e && e.message) ? e.message.slice(0, 40) : 'Try again';
+      setTimeout(function(){ icBtn.textContent = 'Shop with Instacart'; icBtn.disabled = false; }, 2500);
+    });
+  });
 
   var cartBtn = document.getElementById('gAmzCart');
   if (cartBtn) cartBtn.addEventListener('click', function(){
