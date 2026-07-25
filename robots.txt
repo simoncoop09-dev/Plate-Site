@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# AI assistants are welcome to read and cite this site
+User-agent: GPTBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: PerplexityBot
+Allow: /
