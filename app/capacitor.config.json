@@ -1,0 +1,15 @@
+{
+  "appId": "com.plate.nutrition",
+  "appName": "Plate",
+  "webDir": "www",
+  "ios": {
+    "contentInset": "automatic",
+    "backgroundColor": "#FAF9F4"
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_icon",
+      "iconColor": "#7CB342"
+    }
+  }
+}
