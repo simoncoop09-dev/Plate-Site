@@ -57,3 +57,35 @@ Vercel → Project → Settings → Domains. Vercel handles HTTPS automatically.
   links are placeholders). Especially important for a health-adjacent product.
 - **Consider rate limiting** `api/chat.js` (e.g. Vercel's rate-limit examples)
   so strangers can't run up your API bill.
+
+
+---
+
+## What's in this site now
+
+- `index.html` — the landing page, with Libby (AI nutritionist) and the early-access waitlist
+- `api/chat.js` — secure streaming backend for Libby (needs `ANTHROPIC_API_KEY`)
+- `api/waitlist.js` — collects early-access emails
+- `privacy.html`, `terms.html`, `disclaimer.html` — legal pages (TEMPLATES — have a lawyer review before scaling)
+- `robots.txt`, `sitemap.xml` — search + AI assistant crawling
+
+## Where waitlist signups go
+
+Every signup is written to your Vercel logs immediately (Project -> Logs -> search "waitlist"),
+so it works with zero setup.
+
+To send them somewhere real, add a second environment variable in Vercel:
+
+    WAITLIST_WEBHOOK_URL = <a URL that accepts POST>
+
+Anything works: Formspree, Zapier, Make, Beehiiv, ConvertKit, or a Google Sheet via Apps Script.
+The payload is `{ email, source, ts }`.
+
+## Honesty rules baked into this site
+
+- No invented testimonials, user counts, or press logos. Do not add them back.
+- Features that don't exist yet are labelled "Coming soon".
+- Nothing is for sale yet; every CTA collects an email instead of a payment.
+
+When Premium actually exists, wire the pricing buttons to Stripe Checkout and remove
+the "coming soon" pills for whatever has shipped.
