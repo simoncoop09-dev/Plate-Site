@@ -4,7 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Plate — The only meal planner built for GLP-1s</title>
-<meta name="description" content="Personalized high-protein meal plans, smart grocery lists, and a nutritionist that understands your GLP-1 medication — all in one place.">
+<meta name="description" content="Plate is a meal planner built for people on GLP-1 medications. High-protein meals that adapt to your injection cycle, plus Libby — a free AI nutritionist who understands Ozempic, Wegovy, Mounjaro and Zepbound.">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#7CB342">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Plate">
+<meta property="og:title" content="Plate — the only meal planner built for GLP-1s">
+<meta property="og:description" content="High-protein meals that adapt to your injection cycle, plus Libby — a free AI nutritionist who understands your medication.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Plate — the only meal planner built for GLP-1s">
+<meta name="twitter:description" content="High-protein meals that adapt to your injection cycle, plus a free AI nutritionist who understands your medication.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%237CB342'/%3E%3Ccircle cx='16' cy='16' r='7' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -570,6 +580,75 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
 }
 .chip:hover{background:var(--accent);border-color:var(--accent);color:#fff;transform:translateY(-1px)}
 
+/* ---------- trust chips (hero) ---------- */
+.trust-chip{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:13.5px;font-weight:600;color:var(--text-secondary);
+  background:#fff;border:1px solid var(--border);border-radius:100px;padding:8px 15px;
+  box-shadow:var(--shadow-card);
+}
+.trust-chip svg{width:13px;height:13px;stroke:var(--accent);flex-shrink:0}
+
+/* ---------- "what it solves" cards ---------- */
+.solve-num{
+  font-size:13px;font-weight:800;letter-spacing:0.1em;color:var(--accent);
+  margin-bottom:14px;
+}
+.solve-title{font-size:19px;font-weight:700;letter-spacing:-0.01em;margin-bottom:12px}
+.solve-body{font-size:15px;color:var(--text-secondary);line-height:1.7}
+
+/* ---------- coming soon pill ---------- */
+.soon{
+  display:inline-block;margin-left:6px;
+  font-size:10.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;
+  color:var(--text-secondary);background:var(--bg-surface);
+  border:1px solid var(--border);border-radius:100px;padding:2px 8px;white-space:nowrap;
+}
+
+/* ---------- waitlist modal ---------- */
+.wl-overlay{
+  position:fixed;inset:0;z-index:400;background:rgba(26,26,26,0.45);
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+  opacity:0;pointer-events:none;transition:opacity 250ms var(--ease);
+}
+.wl-overlay.open{opacity:1;pointer-events:auto}
+.wl-modal{
+  background:#fff;border-radius:24px;border:1px solid var(--border);
+  box-shadow:0 24px 64px rgba(26,26,26,0.25);
+  width:100%;max-width:440px;padding:34px 30px 30px;position:relative;
+  transform:translateY(18px) scale(0.97);transition:transform 300ms var(--ease-spring);
+}
+.wl-overlay.open .wl-modal{transform:translateY(0) scale(1)}
+.wl-close{
+  position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;
+  background:none;border:none;cursor:pointer;font-size:24px;line-height:1;color:var(--text-tertiary);
+  transition:background 200ms ease;
+}
+.wl-close:hover{background:var(--bg-surface)}
+.wl-icon{
+  width:52px;height:52px;border-radius:16px;margin-bottom:18px;
+  background:linear-gradient(135deg,rgba(124,179,66,0.15),rgba(174,213,129,0.25));
+  display:flex;align-items:center;justify-content:center;
+}
+.wl-icon svg{width:24px;height:24px;stroke:var(--accent-dark)}
+.wl-modal h3{font-size:22px;font-weight:800;letter-spacing:-0.02em;margin-bottom:10px}
+.wl-sub{font-size:15px;color:var(--text-secondary);line-height:1.6;margin-bottom:22px}
+.wl-form{display:flex;flex-direction:column;gap:12px}
+.wl-input{
+  width:100%;height:52px;padding:0 16px;font-family:inherit;font-size:16px;
+  background:var(--bg-surface);border:1.5px solid var(--border);border-radius:12px;color:var(--text-primary);
+  transition:border-color 200ms ease, box-shadow 200ms ease;
+}
+.wl-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,179,66,0.15);outline:none}
+.wl-input::placeholder{color:var(--text-tertiary)}
+.wl-error{font-size:13.5px;color:#C62828;min-height:0}
+.wl-fine{font-size:12.5px;color:var(--text-tertiary);line-height:1.5;margin-top:14px}
+.wl-fine a{color:var(--text-secondary)}
+.wl-success{text-align:center;padding:8px 0 4px}
+.wl-success .wl-icon{margin:0 auto 18px;background:var(--accent)}
+.wl-success .wl-icon svg{stroke:#fff}
+
 /* ---------- scroll reveal ---------- */
 .reveal{opacity:0;transform:translateY(36px);filter:blur(6px);transition:opacity 800ms var(--ease),transform 800ms var(--ease),filter 800ms var(--ease)}
 .reveal.in{opacity:1;transform:translateY(0);filter:blur(0)}
@@ -675,6 +754,55 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
   .ring{--deg:252deg}
 }
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "name": "Plate",
+      "description": "A meal planner built for people taking GLP-1 medications, with an AI nutritionist that adapts to your injection cycle."
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Do I need to be on a GLP-1 to use Plate?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No, but it's built specifically for the unique challenges GLP-1 users face - smaller appetite, nausea, muscle retention needs. Anyone focused on high-protein, portion-controlled eating will benefit."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Plate medical advice?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Plate provides general nutrition information and meal planning tools. Always consult your doctor before making changes to your diet or medication."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What should you eat on Ozempic, Wegovy, Mounjaro or Zepbound?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most people on GLP-1 medications do best prioritising protein at every meal to protect muscle mass, eating smaller portions slowly, and choosing cooler or blander foods on high-nausea days such as Greek yogurt, cottage cheese, eggs, or broth-based soups. Appetite typically returns later in the weekly injection cycle, which is a good time to hit protein and fibre targets. This is general information, not medical advice."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I customise Plate for allergies or dietary restrictions?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. During onboarding you can select vegetarian, vegan, gluten-free, dairy-free, nut allergies, and more. Each meal plan is built around your restrictions."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -689,7 +817,7 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
       <li><a href="#faq">FAQ</a></li>
     </ul>
     <div class="nav-right">
-      <a href="#pricing" class="btn btn-primary nav-cta">Get Started</a>
+      <button class="btn btn-primary nav-cta js-waitlist" type="button" data-source="nav">Get early access</button>
       <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -704,7 +832,7 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
   <a href="#how-it-works">How It Works</a>
   <a href="#pricing">Pricing</a>
   <a href="#faq">FAQ</a>
-  <a href="#pricing" class="btn btn-primary">Get Started</a>
+  <button class="btn btn-primary js-waitlist" type="button" data-source="drawer">Get early access</button>
 </div>
 
 <!-- 1. HERO -->
@@ -724,18 +852,13 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
     <h1 class="hi hi-2">The only meal planner built for <span class="hl">GLP&#8209;1s<svg viewBox="0 0 300 24" preserveAspectRatio="none"><path d="M4 18 Q 75 6, 150 13 T 296 10"/></svg></span></h1>
     <p class="body-large hero-sub hi hi-3">Personalized high-protein meal plans, smart grocery lists, and a nutritionist that understands your medication — all in one place.</p>
     <div class="hero-buttons hi hi-4">
-      <a href="#pricing" class="btn btn-primary">Start Free Trial <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></a>
+      <button class="btn btn-primary js-waitlist" type="button" data-source="hero">Get early access <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></button>
       <a href="#how-it-works" class="btn btn-secondary">See How It Works</a>
     </div>
     <div class="social-proof hi hi-5">
-      <div class="avatars">
-        <div class="avatar av1">JM</div>
-        <div class="avatar av2">SK</div>
-        <div class="avatar av3">AR</div>
-        <div class="avatar av4">TL</div>
-        <div class="avatar av5">DP</div>
-      </div>
-      <span class="caption proof-text">Trusted by <strong><span id="userCount">2,000</span>+</strong> GLP-1 users</span>
+      <span class="trust-chip"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Libby is free to use</span>
+      <span class="trust-chip"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>No credit card</span>
+      <span class="trust-chip"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Built around your injection cycle</span>
     </div>
     <div class="phone-wrap hi hi-6">
       <div class="phone-glow"></div>
@@ -781,21 +904,25 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
 
 <!-- 2. TRUST MARQUEE -->
 <div class="trust">
-  <div class="trust-label">As seen in</div>
+  <div class="trust-label">Built for people taking</div>
   <div class="marquee" aria-hidden="false">
     <div class="marquee-set">
-      <span class="trust-logo">Healthline</span>
-      <span class="trust-logo">Medical News Today</span>
-      <span class="trust-logo">Women's Health</span>
-      <span class="trust-logo">Shape</span>
-      <span class="trust-logo">Verywell Health</span>
+      <span class="trust-logo">Ozempic</span>
+      <span class="trust-logo">Wegovy</span>
+      <span class="trust-logo">Mounjaro</span>
+      <span class="trust-logo">Zepbound</span>
+      <span class="trust-logo">Saxenda</span>
+      <span class="trust-logo">Semaglutide</span>
+      <span class="trust-logo">Tirzepatide</span>
     </div>
     <div class="marquee-set" aria-hidden="true">
-      <span class="trust-logo">Healthline</span>
-      <span class="trust-logo">Medical News Today</span>
-      <span class="trust-logo">Women's Health</span>
-      <span class="trust-logo">Shape</span>
-      <span class="trust-logo">Verywell Health</span>
+      <span class="trust-logo">Ozempic</span>
+      <span class="trust-logo">Wegovy</span>
+      <span class="trust-logo">Mounjaro</span>
+      <span class="trust-logo">Zepbound</span>
+      <span class="trust-logo">Saxenda</span>
+      <span class="trust-logo">Semaglutide</span>
+      <span class="trust-logo">Tirzepatide</span>
     </div>
   </div>
 </div>
@@ -922,7 +1049,7 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
           <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Protein tracking with visual daily goals</li>
           <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Side-effect logging with smart tips</li>
         </ul>
-        <a href="#pricing" class="btn btn-primary">Start Your Free Week <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></a>
+        <button class="btn btn-primary js-waitlist" type="button" data-source="preview">Get early access <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></button>
       </div>
       <div class="preview-right reveal">
         <div class="phone-wrap float">
@@ -974,98 +1101,66 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
   <div class="container">
     <div class="section-head reveal">
       <span class="pill"><span class="pill-dot"></span>Pricing</span>
-      <h2>Start free. Upgrade when you're ready.</h2>
+      <h2>Libby is free today. Premium is coming.</h2>
+      <p class="body-large">Plate is in early access. Everything marked "coming soon" is being built now — join the list and you'll be first in, at founding-member pricing.</p>
     </div>
     <div class="pricing-grid stagger">
       <div class="card price-card">
         <h3>Free</h3>
         <div class="price-row"><span class="stat-number">$0</span><span class="caption">/month</span></div>
         <ul class="price-list">
-          <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>3-day meal plan preview</li>
-          <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Basic protein tracker</li>
-          <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>5 nutritionist chats per day</li>
-          <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>2 education articles</li>
+          <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Unlimited chat with Libby</li>
+          <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Cycle-aware daily check-ins</li>
+          <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Meal &amp; protein guidance on demand</li>
+          <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Side-effect friendly food ideas</li>
         </ul>
-        <a href="#" class="btn btn-secondary">Get Started</a>
+        <button class="btn btn-secondary js-open-chat" type="button">Chat with Libby now</button>
       </div>
       <div class="card price-card price-featured">
-        <span class="badge">Most Popular</span>
+        <span class="badge">Founding members</span>
         <h3>Premium</h3>
         <div class="price-row"><span class="stat-number">$29.99</span><span class="caption">/month</span></div>
         <span class="price-save">or $199/year — save 45%</span>
         <ul class="price-list">
-          <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Full 7-day meal plans</li>
-          <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Unlimited AI nutritionist chat</li>
-          <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Auto grocery lists</li>
-          <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Progress photos &amp; weight log</li>
-          <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Full education library</li>
-          <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Side effect insights &amp; tips</li>
+          <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Everything in Free</li>
+          <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Full 7-day meal plans <span class="soon">Coming soon</span></li>
+          <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Auto grocery lists, sorted by aisle <span class="soon">Coming soon</span></li>
+          <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Protein tracking &amp; weight log <span class="soon">Coming soon</span></li>
+          <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Education library <span class="soon">Coming soon</span></li>
+          <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Side effect insights over time <span class="soon">Coming soon</span></li>
         </ul>
-        <a href="#" class="btn btn-primary">Start Free Trial</a>
+        <button class="btn btn-primary js-waitlist" type="button" data-source="pricing">Get early access</button>
       </div>
     </div>
-    <p class="caption pricing-note">Cancel anytime. No credit card required for trial.</p>
+    <p class="caption pricing-note">Nothing to pay today — Premium isn't on sale yet. Joining the list costs nothing and commits you to nothing.</p>
   </div>
 </section>
 
-<!-- 7. TESTIMONIALS -->
+<!-- 7. WHAT PLATE SOLVES -->
+<!-- NOTE: when you have real users, real testimonials belong here.
+     Never publish invented quotes or results — it's illegal advertising. -->
 <section class="section">
   <div class="container">
     <div class="section-head reveal">
-      <span class="pill"><span class="pill-dot"></span>From Our Users</span>
-      <h2>Real people, real results</h2>
+      <span class="pill"><span class="pill-dot"></span>Why we built it</span>
+      <h2>The problems no one prepares you for</h2>
+      <p class="body-large">Every GLP-1 forum has the same three posts on repeat. Plate is built around them.</p>
     </div>
     <div class="testi-grid stagger">
       <div class="card testi-card">
-        <div class="stars">
-          <svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7-6.2-3.7L5.8 21l1.6-7L2 9.2l7.1-.6z"/></svg>
-          <svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7-6.2-3.7L5.8 21l1.6-7L2 9.2l7.1-.6z"/></svg>
-          <svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7-6.2-3.7L5.8 21l1.6-7L2 9.2l7.1-.6z"/></svg>
-          <svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7-6.2-3.7L5.8 21l1.6-7L2 9.2l7.1-.6z"/></svg>
-          <svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7-6.2-3.7L5.8 21l1.6-7L2 9.2l7.1-.6z"/></svg>
-        </div>
-        <p class="testi-quote">"I was eating nothing but crackers because of nausea. Plate gave me actual meals I could keep down and still hit my protein."</p>
-        <div class="testi-person">
-          <div class="testi-avatar av2">MR</div>
-          <div>
-            <div class="testi-name">Melissa R.</div>
-            <div class="testi-meta">Lost 34 lbs on Mounjaro</div>
-          </div>
-        </div>
+        <div class="solve-num">01</div>
+        <h3 class="solve-title">"Nothing sounds edible"</h3>
+        <p class="solve-body">Food aversion and nausea make normal meals impossible, so people end up living on crackers. Plate leans into cold, bland, protein-dense options on the days you need them — and saves the real food for the days you can enjoy it.</p>
       </div>
       <div class="card testi-card">
-        <div class="stars">
-          <svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7-6.2-3.7L5.8 21l1.6-7L2 9.2l7.1-.6z"/></svg>
-          <svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7-6.2-3.7L5.8 21l1.6-7L2 9.2l7.1-.6z"/></svg>
-          <svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7-6.2-3.7L5.8 21l1.6-7L2 9.2l7.1-.6z"/></svg>
-          <svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7-6.2-3.7L5.8 21l1.6-7L2 9.2l7.1-.6z"/></svg>
-          <svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7-6.2-3.7L5.8 21l1.6-7L2 9.2l7.1-.6z"/></svg>
-        </div>
-        <p class="testi-quote">"The grocery list alone saves me an hour every week. And my nutritionist answers at 10pm when I'm staring at my fridge."</p>
-        <div class="testi-person">
-          <div class="testi-avatar av5">JT</div>
-          <div>
-            <div class="testi-name">James T.</div>
-            <div class="testi-meta">Lost 28 lbs on Ozempic</div>
-          </div>
-        </div>
+        <div class="solve-num">02</div>
+        <h3 class="solve-title">"I'm losing muscle, not just fat"</h3>
+        <p class="solve-body">A tiny appetite makes protein targets genuinely hard to hit. Plate sets a goal based on your body, shows it as one simple ring, and helps you front-load protein on the days your appetite comes back.</p>
       </div>
       <div class="card testi-card">
-        <div class="stars">
-          <svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7-6.2-3.7L5.8 21l1.6-7L2 9.2l7.1-.6z"/></svg>
-          <svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7-6.2-3.7L5.8 21l1.6-7L2 9.2l7.1-.6z"/></svg>
-          <svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7-6.2-3.7L5.8 21l1.6-7L2 9.2l7.1-.6z"/></svg>
-          <svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7-6.2-3.7L5.8 21l1.6-7L2 9.2l7.1-.6z"/></svg>
-          <svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7-6.2-3.7L5.8 21l1.6-7L2 9.2l7.1-.6z"/></svg>
-        </div>
-        <p class="testi-quote">"I finally stopped losing muscle. The protein tracker is simple and the meal plans actually fit my tiny appetite."</p>
-        <div class="testi-person">
-          <div class="testi-avatar av1">AS</div>
-          <div>
-            <div class="testi-name">Angela S.</div>
-            <div class="testi-meta">Lost 41 lbs on Wegovy</div>
-          </div>
-        </div>
+        <div class="solve-num">03</div>
+        <h3 class="solve-title">"I can't think about food anymore"</h3>
+        <p class="solve-body">Decision fatigue is real when eating stops being fun. Plate decides for you — a plan that already accounts for your medication, your shot day, and how you actually feel this morning.</p>
       </div>
     </div>
   </div>
@@ -1119,9 +1214,9 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
   <div class="blob cta-blob-2"></div>
   <div class="container reveal">
     <h2>Your first week is free.</h2>
-    <p class="body-large">Join 2,000+ GLP-1 users who finally have a meal plan that understands their medication.</p>
-    <a href="#pricing" class="btn btn-cta">Start Your Free Trial <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></a>
-    <div class="cta-note">No credit card required</div>
+    <p class="body-large">Talk to Libby free right now, and get on the early access list for meal plans and grocery lists.</p>
+    <button class="btn btn-cta js-waitlist" type="button" data-source="footer-cta">Get early access <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></button>
+    <div class="cta-note">Free, and no credit card — Premium isn't on sale yet.</div>
   </div>
 </section>
 
@@ -1154,9 +1249,9 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
       <div>
         <span class="label">Legal</span>
         <ul>
-          <li><a href="#">Privacy</a></li>
-          <li><a href="#">Terms</a></li>
-          <li><a href="#">Medical Disclaimer</a></li>
+          <li><a href="/privacy.html">Privacy</a></li>
+          <li><a href="/terms.html">Terms</a></li>
+          <li><a href="/disclaimer.html">Medical Disclaimer</a></li>
         </ul>
       </div>
     </div>
@@ -1170,6 +1265,34 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
     </div>
   </div>
 </footer>
+
+<!-- WAITLIST MODAL -->
+<div class="wl-overlay" id="wlOverlay" role="dialog" aria-modal="true" aria-labelledby="wlTitle">
+  <div class="wl-modal">
+    <button class="wl-close" id="wlClose" aria-label="Close">&times;</button>
+    <div id="wlFormWrap">
+      <div class="wl-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M4 7l8 6 8-6"/></svg>
+      </div>
+      <h3 id="wlTitle">Get early access</h3>
+      <p class="wl-sub">Meal plans and grocery lists are being built now. Leave your email and you'll be first in — plus founding-member pricing when Premium launches.</p>
+      <div class="wl-form">
+        <input type="email" class="wl-input" id="wlEmail" placeholder="you@email.com" autocomplete="email" inputmode="email" maxlength="200">
+        <div class="wl-error" id="wlError"></div>
+        <button class="btn btn-primary" id="wlSubmit" type="button" style="width:100%">Join the list</button>
+      </div>
+      <p class="wl-fine">No spam, unsubscribe anytime. Nothing to pay — Premium isn't on sale yet. See our <a href="/privacy.html">Privacy Policy</a>.</p>
+    </div>
+    <div id="wlDone" class="wl-success" hidden>
+      <div class="wl-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <h3>You're on the list</h3>
+      <p class="wl-sub">We'll email you the moment meal plans go live. In the meantime, Libby is free — go ask her what to eat today.</p>
+      <button class="btn btn-primary js-open-chat" type="button" style="width:100%">Chat with Libby</button>
+    </div>
+  </div>
+</div>
 
 <!-- NUTRITIONIST CHAT WIDGET -->
 <button class="chat-fab" id="chatFab" aria-label="Open nutritionist chat">
@@ -1288,20 +1411,85 @@ var ringObserver = new IntersectionObserver(function(entries){
 }, { threshold: 0.4 });
 document.querySelectorAll('.js-ring').forEach(function(r){ ringObserver.observe(r); });
 
-// User counter in hero
-var countEl = document.getElementById('userCount');
-if (countEl && !reducedMotion) {
-  var target = 2000, dur = 1500, t0 = null;
-  countEl.textContent = '0';
-  function countFrame(ts){
-    if (!t0) t0 = ts;
-    var p = Math.min((ts - t0) / dur, 1);
-    var e = 1 - Math.pow(1 - p, 3);
-    countEl.textContent = Math.round(e * target).toLocaleString();
-    if (p < 1) requestAnimationFrame(countFrame);
-  }
-  setTimeout(function(){ requestAnimationFrame(countFrame); }, 700);
+// ---------- Waitlist modal ----------
+var wlOverlay = document.getElementById('wlOverlay');
+var wlClose = document.getElementById('wlClose');
+var wlEmail = document.getElementById('wlEmail');
+var wlSubmit = document.getElementById('wlSubmit');
+var wlError = document.getElementById('wlError');
+var wlFormWrap = document.getElementById('wlFormWrap');
+var wlDone = document.getElementById('wlDone');
+var wlSource = 'unknown';
+var wlBusy = false;
+
+function openWaitlist(source){
+  wlSource = source || 'unknown';
+  wlError.textContent = '';
+  wlOverlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(function(){ if (wlDone.hidden) wlEmail.focus(); }, 260);
 }
+function closeWaitlist(){
+  wlOverlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+wlClose.addEventListener('click', closeWaitlist);
+wlOverlay.addEventListener('click', function(e){ if (e.target === wlOverlay) closeWaitlist(); });
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape') { closeWaitlist(); closeDrawer(); }
+});
+document.querySelectorAll('.js-waitlist').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    closeDrawer();
+    openWaitlist(btn.getAttribute('data-source'));
+  });
+});
+document.querySelectorAll('.js-open-chat').forEach(function(btn){
+  btn.addEventListener('click', function(){ closeWaitlist(); openChat(); });
+});
+
+function submitWaitlist(){
+  if (wlBusy) return;
+  var email = (wlEmail.value || '').trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+    wlError.textContent = 'Please enter a valid email address.';
+    wlEmail.focus();
+    return;
+  }
+  wlBusy = true;
+  wlError.textContent = '';
+  wlSubmit.textContent = 'Joining...';
+  wlSubmit.disabled = true;
+
+  var done = function(){
+    wlFormWrap.hidden = true;
+    wlDone.hidden = false;
+    wlBusy = false;
+    wlSubmit.textContent = 'Join the list';
+    wlSubmit.disabled = false;
+  };
+
+  if (location.protocol !== 'http:' && location.protocol !== 'https:') { done(); return; }
+
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email, source: wlSource })
+  })
+  .then(function(res){ return res.json().then(function(d){ return { ok: res.ok, d: d }; }); })
+  .then(function(r){
+    if (!r.ok) throw new Error((r.d && r.d.error) || 'Something went wrong.');
+    done();
+  })
+  .catch(function(err){
+    wlError.textContent = (err && err.message) || 'Something went wrong. Please try again.';
+    wlBusy = false;
+    wlSubmit.textContent = 'Join the list';
+    wlSubmit.disabled = false;
+  });
+}
+wlSubmit.addEventListener('click', submitWaitlist);
+wlEmail.addEventListener('keydown', function(e){ if (e.key === 'Enter') submitWaitlist(); });
 
 // Scroll reveal
 var revealObserver = new IntersectionObserver(function(entries){
