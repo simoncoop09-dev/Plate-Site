@@ -102,8 +102,7 @@ export default async function handler(req, res) {
         stream: true,
         system: PLAN_SYSTEM,
         messages: [
-          { role: 'user', content: prompt },
-          { role: 'assistant', content: '{' }   // prefill forces clean JSON
+          { role: 'user', content: prompt + '\n\nBegin your response with the opening brace of the JSON object.' }
         ]
       })
     });
