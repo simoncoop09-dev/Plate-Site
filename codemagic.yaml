@@ -1,0 +1,59 @@
+# Codemagic cloud build for Plate iOS — no Mac required.
+#
+# SETUP (one time, ~15 min once the Apple Developer account exists):
+# 1. codemagic.io → sign up with GitHub → add the Plate-Site repository.
+# 2. In App Store Connect: Users and Access → Integrations → App Store Connect
+#    API → Generate API Key (role: App Manager). Note the Issuer ID and Key ID,
+#    download the .p8 file.
+# 3. In Codemagic → Teams → Integrations → App Store Connect: add that key.
+#    Name the integration: plate_asc
+# 4. In Codemagic app settings → Environment variables, add:
+#      PLATE_SITE_URL = https://YOUR-SITE.vercel.app   (group: plate)
+# 5. In App Store Connect → Apps → "+" → New App:
+#      Name: Plate — GLP-1 Meal Planner, Bundle ID: com.plate.nutrition,
+#      SKU: plate1, Language: English (U.S.)
+# 6. Start the workflow below. It builds the app and uploads it to TestFlight.
+
+workflows:
+  ios-plate:
+    name: Build Plate iOS
+    max_build_duration: 60
+    integrations:
+      app_store_connect: plate_asc
+    environment:
+      groups:
+        - plate
+      xcode: latest
+      node: 20
+      vars:
+        BUNDLE_ID: "com.plate.nutrition"
+    scripts:
+      - name: Install dependencies
+        script: |
+          cd app
+          npm install
+      - name: Bundle the live site into the app
+        script: |
+          cd app
+          node fetch-site.js
+      - name: Add iOS platform
+        script: |
+          cd app
+          npx cap add ios || true
+          npx cap sync ios
+      - name: Set up code signing
+        script: |
+          cd app/ios/App
+          xcode-project use-profiles --project App.xcodeproj || true
+          app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
+          xcode-project use-profiles
+      - name: Build the app
+        script: |
+          cd app/ios/App
+          xcode-project build-ipa --project App.xcodeproj --scheme App
+    artifacts:
+      - app/ios/App/build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
