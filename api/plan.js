@@ -3,6 +3,25 @@
 
 export const config = { maxDuration: 60 };
 
+// ---- Rate limiting (in-memory, per warm instance) ----
+// Not perfect (cold starts reset it) but blocks sustained abuse cheaply.
+const RL = globalThis.__plateRL || (globalThis.__plateRL = new Map());
+function rateLimit(req, kind, perDay, minGapMs) {
+  const ip = (req.headers['x-forwarded-for'] || 'unknown').split(',')[0].trim();
+  const day = new Date().toISOString().slice(0, 10);
+  const key = kind + ':' + ip;
+  const now = Date.now();
+  let rec = RL.get(key);
+  if (!rec || rec.day !== day) rec = { day, count: 0, last: 0 };
+  if (now - rec.last < minGapMs) return { ok: false, why: 'burst' };
+  if (rec.count >= perDay) return { ok: false, why: 'daily' };
+  rec.count++; rec.last = now;
+  RL.set(key, rec);
+  if (RL.size > 5000) { const k = RL.keys().next().value; RL.delete(k); }
+  return { ok: true };
+}
+
+
 const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
 const PLAN_SYSTEM = `You are the meal planning engine for Plate, a nutrition app for people taking GLP-1 medications (Ozempic, Wegovy, Mounjaro, Zepbound).
@@ -67,6 +86,13 @@ export default async function handler(req, res) {
     return;
   }
 
+  const rl = rateLimit(req, 'plan', 6, 10000);
+  if (!rl.ok) {
+    res.status(429).json({ error: rl.why === 'daily'
+      ? "You've built today's limit of plans — tomorrow brings a fresh batch."
+      : 'Give the kitchen a few seconds between plans.' });
+    return;
+  }
   const b = req.body || {};
   const med = typeof b.med === 'string' ? b.med.slice(0, 40) : 'a GLP-1 medication';
   const shotDay = (typeof b.shotDay === 'number' && b.shotDay >= 0 && b.shotDay <= 6) ? DAYS[b.shotDay] : null;
