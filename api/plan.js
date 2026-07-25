@@ -1,6 +1,8 @@
 // Plate — 7-day meal plan generator
 // Returns strict JSON so the front end can render a plan and derive a grocery list.
 
+export const config = { maxDuration: 60 };
+
 const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
 const PLAN_SYSTEM = `You are the meal planning engine for Plate, a nutrition app for people taking GLP-1 medications (Ozempic, Wegovy, Mounjaro, Zepbound).
@@ -22,7 +24,9 @@ OUTPUT RULES:
 - Respond with ONE valid JSON object and NOTHING else. No markdown fences, no commentary.
 - Every ingredient needs an "aisle" from exactly this list: Produce, Meat & Seafood, Dairy & Eggs, Pantry, Frozen, Bakery, Other.
 - Keep ingredient names generic and shoppable ("chicken breast", not "1 organic free-range chicken breast from the good butcher").
-- "how" is ONE short sentence of preparation.
+- "how" is ONE short sentence of preparation, 12 words maximum.
+- 3 to 5 ingredients per meal, no more. "qty" stays short ("6 oz", "1 cup").
+- "note" is 10 words maximum. Keep every string tight — this must generate fast.
 - Never mention medication dosing, medical treatment, or expected weight loss anywhere in the output.
 
 Schema:
@@ -85,7 +89,7 @@ export default async function handler(req, res) {
   ].filter(Boolean).join('\n');
 
   try {
-    const upstream = await fetch('https://api.anthropic.com/v1/messages', {
+    const doFetch = () => fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
@@ -94,7 +98,8 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 8000,
+        max_tokens: 6000,
+        stream: true,
         system: PLAN_SYSTEM,
         messages: [
           { role: 'user', content: prompt },
@@ -103,45 +108,37 @@ export default async function handler(req, res) {
       })
     });
 
-    if (!upstream.ok) {
+    let upstream = await doFetch();
+    if (!upstream.ok && upstream.status >= 500) {
+      // transient upstream problem — one retry
+      await new Promise(r => setTimeout(r, 800));
+      upstream = await doFetch();
+    }
+
+    if (!upstream.ok || !upstream.body) {
       const t = await upstream.text().catch(() => '');
       console.error('[plan] upstream error', upstream.status, t.slice(0, 300));
       res.status(502).json({ error: 'Could not build your plan right now. Please try again.' });
       return;
     }
 
-    const data = await upstream.json();
-    let text = (data.content || [])
-      .map(bl => (bl.type === 'text' ? bl.text : ''))
-      .join('')
-      .trim();
-
-    // Strip any stray fencing FIRST, then re-attach the prefill brace
-    text = text.replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
-    if (!text.startsWith('{')) text = '{' + text;
-
-    let plan;
-    try {
-      plan = JSON.parse(text);
-    } catch (e) {
-      const first = text.indexOf('{');
-      const last = text.lastIndexOf('}');
-      if (first !== -1 && last > first) {
-        try { plan = JSON.parse(text.slice(first, last + 1)); } catch (e2) { plan = null; }
-      }
+    // Pipe the SSE stream straight through — the client assembles the JSON.
+    res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    const reader = upstream.body.getReader();
+    const decoder = new TextDecoder();
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      res.write(decoder.decode(value, { stream: true }));
     }
-
-    if (!plan || !Array.isArray(plan.days) || !plan.days.length) {
-      console.error('[plan] unparseable output:', text.slice(0, 400));
-      res.status(502).json({ error: 'Your plan came back malformed. Please try again.' });
-      return;
-    }
-
-    plan.generatedAt = new Date().toISOString();
-    plan.proteinGoal = plan.proteinGoal || proteinGoal;
-    res.status(200).json(plan);
+    res.end();
   } catch (err) {
     console.error('[plan] error', String(err && err.message));
-    res.status(500).json({ error: 'Something went wrong building your plan.' });
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Something went wrong building your plan.' });
+    } else {
+      res.end();
+    }
   }
 }
