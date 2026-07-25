@@ -561,6 +561,63 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
 }
 .chip:hover{background:var(--accent);border-color:var(--accent);color:#fff;transform:translateY(-1px)}
 
+/* ---------- dashboard (returning users) ---------- */
+.dash{
+  display:none;
+  min-height:100svh;
+  padding:calc(96px + env(safe-area-inset-top)) 20px 40px;
+  background:
+    radial-gradient(120% 50% at 50% 115%, rgba(255,166,110,0.30), rgba(255,166,110,0) 60%),
+    linear-gradient(180deg, #FAF9F4 0%, #F2F4E6 100%);
+}
+body.has-dash .dash{display:block}
+body.has-dash .hero{display:none}
+.dash-inner{max-width:640px;margin:0 auto}
+.dash-date{font-size:12px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:6px}
+.dash-greet{font-family:'Fraunces',Georgia,serif;font-size:clamp(30px,6vw,40px);font-weight:600;letter-spacing:-0.01em;line-height:1.1;margin-bottom:6px}
+.dash-cycle{font-size:14.5px;color:var(--text-secondary);margin-bottom:22px}
+.dash-cycle b{color:var(--accent-dark)}
+.dash-card{background:#fff;border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:14px;box-shadow:var(--shadow-card)}
+.dash-card h3{font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:14px}
+.dash-checkin-row{display:flex;gap:10px}
+.dash-mood{
+  flex:1;font-family:inherit;font-size:26px;cursor:pointer;background:var(--bg-surface);
+  border:1.5px solid var(--border);border-radius:16px;padding:14px 0;transition:all 200ms ease;
+}
+.dash-mood:active{transform:scale(0.93)}
+.dash-mood.picked{background:rgba(124,179,66,0.12);border-color:var(--accent)}
+.dash-checkin-done{font-size:15px;color:var(--text-secondary);line-height:1.6}
+.dash-checkin-done b{color:var(--text-primary)}
+.dash-meal{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border-light);cursor:pointer}
+.dash-meal:last-child{border-bottom:none}
+.dm-check{
+  width:24px;height:24px;border-radius:8px;border:2px solid var(--border);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;transition:all 200ms ease;
+}
+.dm-check svg{width:13px;height:13px;stroke:#fff;stroke-width:3.5;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.dash-meal.eaten .dm-check{background:var(--accent);border-color:var(--accent)}
+.dash-meal.eaten .dm-check svg{opacity:1}
+.dm-info{flex:1;min-width:0}
+.dm-slot{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-tertiary)}
+.dm-name{font-size:15px;font-weight:600;line-height:1.3}
+.dash-meal.eaten .dm-name{color:var(--text-tertiary);text-decoration:line-through}
+.dm-protein{font-size:12.5px;font-weight:700;color:var(--accent-dark);white-space:nowrap}
+.dash-protein-track{height:10px;background:var(--bg-surface);border-radius:6px;overflow:hidden;margin-top:6px}
+.dash-protein-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,#AED581,var(--accent));transition:width 500ms var(--ease)}
+.dash-protein-label{display:flex;justify-content:space-between;font-size:13px;color:var(--text-secondary);margin-top:8px}
+.dash-protein-label b{color:var(--text-primary)}
+.dash-row{display:flex;gap:14px}
+.dash-row .dash-card{flex:1;margin-bottom:14px}
+.dash-streak-num{font-family:'Fraunces',Georgia,serif;font-size:36px;font-weight:600;color:var(--accent-dark);line-height:1}
+.dash-streak-sub{font-size:12.5px;color:var(--text-secondary);margin-top:4px}
+.dash-quick{display:flex;gap:10px;margin-top:4px}
+.dash-quick .btn{flex:1;height:46px;font-size:14px;padding:0}
+.dash-noplan{font-size:14.5px;color:var(--text-secondary);line-height:1.6}
+.dash-about{
+  text-align:center;padding:26px 0 4px;font-size:12.5px;color:var(--text-tertiary);
+}
+.dash-about button{font-family:inherit;background:none;border:none;color:var(--accent-dark);font-weight:700;font-size:12.5px;cursor:pointer;padding:0}
+
 /* ---------- bottom tab bar (mobile / app) ---------- */
 .tabbar{
   display:none;position:fixed;left:0;right:0;bottom:0;z-index:305;
@@ -1010,6 +1067,44 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
   <a href="#faq">FAQ</a>
   <button class="btn btn-primary js-plan" type="button">Build my plan</button>
 </div>
+
+<!-- 0. DASHBOARD (returning users) -->
+<section class="dash" id="dash">
+  <div class="dash-inner">
+    <div class="dash-date" id="dashDate"></div>
+    <div class="dash-greet" id="dashGreet">Good morning</div>
+    <div class="dash-cycle" id="dashCycle"></div>
+
+    <div class="dash-card" id="dashCheckinCard">
+      <h3>Morning check-in</h3>
+      <div id="dashCheckinBody"></div>
+    </div>
+
+    <div class="dash-card">
+      <h3>Today's meals</h3>
+      <div id="dashMeals"></div>
+      <div class="dash-protein-track"><div class="dash-protein-fill" id="dashProteinFill" style="width:0%"></div></div>
+      <div class="dash-protein-label"><span><b id="dashProteinNow">0g</b> eaten</span><span>goal <b id="dashProteinGoal">—</b></span></div>
+    </div>
+
+    <div class="dash-row">
+      <div class="dash-card">
+        <h3>Streak</h3>
+        <div class="dash-streak-num" id="dashStreak">0</div>
+        <div class="dash-streak-sub">days checked in</div>
+      </div>
+      <div class="dash-card">
+        <h3>Quick actions</h3>
+        <div class="dash-quick">
+          <button class="btn btn-secondary js-plan" type="button">Plan</button>
+          <button class="btn btn-secondary js-grocery" type="button">Grocery</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-about">Curious how Plate works? <button id="dashAbout" type="button">See the full site &darr;</button></div>
+  </div>
+</section>
 
 <!-- 1. HERO -->
 <header class="hero">
@@ -1668,6 +1763,129 @@ window.addEventListener('scroll', function(){
   if (!scrubTicking) { scrubTicking = true; requestAnimationFrame(scrubPhone); }
 }, { passive: true });
 
+// ================= DASHBOARD =================
+var DASH_TIPS = {
+  rough: "Gentle mode today \ud83c\udf72 — cold, bland, protein-first, small portions.",
+  okay: "Steady day \ud83d\udc4d — small-but-normal portions, lean protein every meal.",
+  good: "Strong day \ud83d\udcaa — bank protein and fiber while the appetite's here."
+};
+
+function dashQualified(){
+  return typeof plateState.shotDay === 'number' || !!plateState.med || !!currentPlan;
+}
+
+function todaysPlanDay(){
+  if (!currentPlan || !Array.isArray(currentPlan.days)) return null;
+  var short = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date().getDay()];
+  for (var i = 0; i < currentPlan.days.length; i++) {
+    var n = String(currentPlan.days[i].day || '');
+    if (n.slice(0,3).toLowerCase() === short.toLowerCase()) return currentPlan.days[i];
+  }
+  return currentPlan.days[0] || null;
+}
+
+function eatenKey(){ return 'plateEaten:' + todayKey(); }
+function getEaten(){
+  try { return JSON.parse(window.localStorage.getItem(eatenKey())) || {}; } catch(e){ return {}; }
+}
+
+function renderDash(){
+  var qualified = dashQualified();
+  document.body.classList.toggle('has-dash', qualified);
+  if (!qualified) return;
+
+  var now = new Date();
+  document.getElementById('dashDate').textContent =
+    now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  var h = now.getHours();
+  document.getElementById('dashGreet').textContent =
+    h < 5 ? 'Up late?' : h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+
+  var d = cycleDay();
+  var cyc = document.getElementById('dashCycle');
+  if (d !== null) {
+    var phase = d <= 3 ? 'gentle days' : (d <= 5 ? 'steady days' : 'strong days');
+    var shotTomorrow = (typeof plateState.shotDay === 'number') && ((now.getDay() + 1) % 7) === plateState.shotDay;
+    cyc.innerHTML = 'Cycle day <b>' + d + '</b> \u00b7 ' + phase + (d === 1 ? ' \u00b7 <b>shot day</b>' : '') + (shotTomorrow ? ' \u00b7 shot day tomorrow' : '');
+  } else {
+    cyc.innerHTML = 'Set your shot day with Libby to unlock cycle guidance.';
+  }
+
+  // check-in card
+  var body = document.getElementById('dashCheckinBody');
+  if (plateState.checkinDate === todayKey() && plateState.checkin) {
+    var moodTxt = plateState.checkin === 'rough' ? '\ud83d\ude23 Rough' : plateState.checkin === 'okay' ? '\ud83d\ude10 Okay' : '\ud83d\ude0a Good';
+    body.innerHTML = '<div class="dash-checkin-done"><b>' + moodTxt + '</b> \u2014 ' + DASH_TIPS[plateState.checkin] + '</div>';
+  } else {
+    body.innerHTML = '<div class="dash-checkin-row">' +
+      '<button class="dash-mood" data-mood="rough" type="button">\ud83d\ude23</button>' +
+      '<button class="dash-mood" data-mood="okay" type="button">\ud83d\ude10</button>' +
+      '<button class="dash-mood" data-mood="good" type="button">\ud83d\ude0a</button></div>';
+    body.querySelectorAll('.dash-mood').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        btn.classList.add('picked');
+        setTimeout(function(){ recordCheckin(btn.getAttribute('data-mood')); }, 220);
+      });
+    });
+  }
+
+  // meals card
+  var mealsEl = document.getElementById('dashMeals');
+  var day = todaysPlanDay();
+  var goal = (currentPlan && currentPlan.proteinGoal) || null;
+  document.getElementById('dashProteinGoal').textContent = goal ? goal + 'g' : '\u2014';
+  if (day && Array.isArray(day.meals) && day.meals.length) {
+    var eaten = getEaten();
+    var eatenProtein = 0;
+    var htmlM = '';
+    day.meals.forEach(function(m, i){
+      var isEaten = !!eaten[i];
+      if (isEaten) eatenProtein += Number(m.protein) || 0;
+      htmlM += '<div class="dash-meal' + (isEaten ? ' eaten' : '') + '" data-i="' + i + '">' +
+        '<span class="dm-check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>' +
+        '<span class="dm-info"><span class="dm-slot">' + esc(m.slot) + '</span>' +
+        '<span class="dm-name">' + esc(m.name) + '</span></span>' +
+        '<span class="dm-protein">' + (Number(m.protein) || 0) + 'g</span></div>';
+    });
+    mealsEl.innerHTML = htmlM;
+    mealsEl.querySelectorAll('.dash-meal').forEach(function(row){
+      row.addEventListener('click', function(){
+        var i = row.getAttribute('data-i');
+        var e2 = getEaten();
+        e2[i] = !e2[i];
+        try { window.localStorage.setItem(eatenKey(), JSON.stringify(e2)); } catch(e){}
+        renderDash();
+      });
+    });
+    var pct = goal ? Math.min(Math.round((eatenProtein / goal) * 100), 100) : 0;
+    document.getElementById('dashProteinFill').style.width = pct + '%';
+    document.getElementById('dashProteinNow').textContent = eatenProtein + 'g';
+  } else {
+    mealsEl.innerHTML = '<div class="dash-noplan">No plan for today yet \u2014 build your week and your meals will show up here.</div>' +
+      '<button class="btn btn-primary js-plan" type="button" style="width:100%;margin-top:12px">Build my 7-day plan</button>';
+    mealsEl.querySelector('.js-plan').addEventListener('click', function(){
+      if (currentPlan) openPlan(); else openPlanBuilder();
+    });
+    document.getElementById('dashProteinFill').style.width = '0%';
+    document.getElementById('dashProteinNow').textContent = '0g';
+  }
+
+  // streak
+  var s = { count: 0 };
+  try { s = JSON.parse(window.localStorage.getItem('plateStreak')) || s; } catch(e){}
+  document.getElementById('dashStreak').textContent = s.count || 0;
+}
+
+document.getElementById('dashAbout').addEventListener('click', function(){
+  var hero = document.querySelector('.hero');
+  document.body.classList.remove('has-dash');
+  window.scrollTo({ top: 0, behavior: 'auto' });
+  track('dash_see_site');
+});
+
+// defer first render until all state (plateState, currentPlan) is initialised
+setTimeout(function(){ renderDash(); }, 0);
+
 // Rooms app screen
 var roomsOverlay = document.getElementById('roomsOverlay');
 var roomsPane = document.getElementById('roomsPane');
@@ -1699,6 +1917,7 @@ function openRooms(){
 function closeRooms(){
   roomsOverlay.classList.remove('open');
   if (!planOverlay.classList.contains('open')) document.body.style.overflow = '';
+  if (typeof setActiveTab === 'function') setActiveTab('tabHome');
 }
 document.getElementById('roomsClose').addEventListener('click', closeRooms);
 
@@ -1710,6 +1929,7 @@ var tabHome = document.getElementById('tabHome');
 if (tabHome) {
   tabHome.addEventListener('click', function(){
     closePlan(); closeChat(); closeWaitlist(); closePlanBuilder(); closeRooms();
+    renderDash();
     window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
     setActiveTab('tabHome');
   });
@@ -1861,7 +2081,8 @@ document.querySelectorAll('.js-room').forEach(function(card){
   });
 });
 document.querySelectorAll('.js-open-chat').forEach(function(btn){
-  btn.addEventListener('click', function(){ closeWaitlist(); openChat(); });
+  btn.addEventListener('click', function(){
+    if (currentPersona !== 'libby') switchPersona('libby'); closeWaitlist(); openChat(); });
 });
 
 function submitWaitlist(){
@@ -1880,6 +2101,7 @@ function submitWaitlist(){
   var done = function(){
     wlFormWrap.hidden = true;
     wlDone.hidden = false;
+    track('waitlist_signup', '');
     wlBusy = false;
     wlSubmit.textContent = 'Join the list';
     wlSubmit.disabled = false;
@@ -1933,6 +2155,16 @@ var AISLE_ORDER = ['Produce','Meat & Seafood','Dairy & Eggs','Bakery','Frozen','
 // Find an ASIN on any Amazon product page (in the URL after /dp/, e.g. amazon.com/dp/B01H5PW1S0).
 // Items not in this map still get a per-item "find on Amazon Fresh" link automatically.
 var AMAZON_TAG = '';
+function track(event, meta){
+  try {
+    if (location.protocol !== 'http:' && location.protocol !== 'https:') return;
+    var payload = JSON.stringify({ event: event, meta: meta || '' });
+    if (navigator.sendBeacon) navigator.sendBeacon('/api/track', new Blob([payload], { type: 'application/json' }));
+    else fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload }).catch(function(){});
+  } catch(e){}
+}
+track('page_view');
+
 var instacartEnabled = false;
 if (location.protocol === 'http:' || location.protocol === 'https:') {
   fetch('/api/instacart').then(function(r){ return r.json(); })
@@ -2074,6 +2306,7 @@ function buildPlan(){
     currentDayIdx = 0;
     groceryChecked = {};
     savePlan();
+    track('plan_built', (payload.restrictions || []).join(',') || 'none');
     closePlanBuilder();
     openPlan();
   };
@@ -2192,6 +2425,7 @@ function openPlan(){
 function closePlan(){
   planOverlay.classList.remove('open');
   document.body.style.overflow = '';
+  if (typeof setActiveTab === 'function') setActiveTab('tabHome');
 }
 document.getElementById('planClose').addEventListener('click', closePlan);
 document.getElementById('planRebuild').addEventListener('click', openPlanBuilder);
@@ -2265,6 +2499,7 @@ function renderPlan(){
     b.addEventListener('click', function(){
       var meal = b.getAttribute('data-meal');
       closePlan();
+      if (currentPersona !== 'libby') switchPersona('libby');
       openChat();
       setTimeout(function(){
         chatInput.value = 'Tell me more about "' + meal + '" from my meal plan — how do I make it, and can I swap anything?';
@@ -2540,6 +2775,26 @@ function suggestionChips(){
   ], function(v){ sendPreset(v); });
 }
 
+function recordCheckin(mood){
+  plateState.checkin = mood;
+  plateState.checkinDate = todayKey();
+  // streak
+  var s = { last: '', count: 0 };
+  try { s = JSON.parse(window.localStorage.getItem('plateStreak')) || s; } catch(e){}
+  var today = todayKey();
+  if (s.last !== today) {
+    var y = new Date(); y.setDate(y.getDate() - 1);
+    var yk = y.getFullYear() + '-' + String(y.getMonth() + 1).padStart(2, '0') + '-' + String(y.getDate()).padStart(2, '0');
+    s.count = (s.last === yk) ? s.count + 1 : 1;
+    s.last = today;
+    try { window.localStorage.setItem('plateStreak', JSON.stringify(s)); } catch(e){}
+  }
+  saveState();
+  track('checkin', mood);
+  if (typeof renderDash === 'function') renderDash();
+  return s.count;
+}
+
 function startCheckin(){
   addMsg("How's your stomach today?", 'bot');
   addChips([
@@ -2547,9 +2802,7 @@ function startCheckin(){
     { label: '\ud83d\ude10 Okay', value: 'okay' },
     { label: '\ud83d\ude0a Good', value: 'good' }
   ], function(v){
-    plateState.checkin = v;
-    plateState.checkinDate = todayKey();
-    saveState();
+    recordCheckin(v);
     addMsg(v === 'rough' ? '\ud83d\ude23 Rough' : v === 'okay' ? '\ud83d\ude10 Okay' : '\ud83d\ude0a Good', 'user');
     var d = cycleDay();
     var shotTomorrow = (typeof plateState.shotDay === 'number') && ((new Date().getDay() + 1) % 7) === plateState.shotDay;
@@ -2658,6 +2911,7 @@ function openChat(){
 }
 function closeChat(){
   chatPanel.classList.remove('open');
+  if (typeof setActiveTab === 'function') setActiveTab('tabHome');
   chatPanel.setAttribute('aria-hidden','true');
   chatFab.style.opacity = '1';
   chatFab.style.pointerEvents = 'auto';
@@ -2695,6 +2949,7 @@ function sendChat(){
   chatInput.value = '';
   addMsg(text, 'user');
   chatHistory.push({ role: 'user', content: text });
+  track('chat_message', currentPersona);
   var typing = addTyping();
 
   var botDiv = null;
