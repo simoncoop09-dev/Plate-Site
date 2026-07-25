@@ -25,7 +25,7 @@ OUTPUT RULES:
 - Every ingredient needs an "aisle" from exactly this list: Produce, Meat & Seafood, Dairy & Eggs, Pantry, Frozen, Bakery, Other.
 - Keep ingredient names generic and shoppable ("chicken breast", not "1 organic free-range chicken breast from the good butcher").
 - "how" is ONE short sentence of preparation, 12 words maximum.
-- 3 to 5 ingredients per meal, no more. "qty" stays short ("6 oz", "1 cup").
+- 3 or 4 ingredients per meal, never more. "qty" stays short ("6 oz", "1 cup").
 - "note" is 10 words maximum. Keep every string tight — this must generate fast.
 - Never mention medication dosing, medical treatment, or expected weight loss anywhere in the output.
 
@@ -98,7 +98,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 6000,
+        max_tokens: 4000,
         stream: true,
         system: PLAN_SYSTEM,
         messages: [
@@ -109,16 +109,22 @@ export default async function handler(req, res) {
     });
 
     let upstream = await doFetch();
-    if (!upstream.ok && upstream.status >= 500) {
-      // transient upstream problem — one retry
-      await new Promise(r => setTimeout(r, 800));
+    for (let attempt = 0; attempt < 2 && !upstream.ok && (upstream.status === 429 || upstream.status >= 500); attempt++) {
+      const ra = parseInt(upstream.headers.get('retry-after') || '0', 10);
+      const wait = Math.min((ra > 0 ? ra * 1000 : 2500 * (attempt + 1)), 15000);
+      await new Promise(r => setTimeout(r, wait));
       upstream = await doFetch();
     }
 
     if (!upstream.ok || !upstream.body) {
       const t = await upstream.text().catch(() => '');
       console.error('[plan] upstream error', upstream.status, t.slice(0, 300));
-      res.status(502).json({ error: 'Could not build your plan right now. Please try again.' });
+      let detail = '';
+      try { detail = (JSON.parse(t).error || {}).message || ''; } catch (e) {}
+      const friendly = upstream.status === 429
+        ? 'The kitchen is at capacity for a moment — wait about a minute and try again.'
+        : 'Could not build your plan right now (' + upstream.status + (detail ? ': ' + detail.slice(0, 140) : '') + ').';
+      res.status(502).json({ error: friendly });
       return;
     }
 
