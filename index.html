@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Plate — The only meal planner built for GLP-1s</title>
 <meta name="description" content="Plate is a meal planner built for people on GLP-1 medications. High-protein meals that adapt to your injection cycle, plus Libby — a free AI nutritionist who understands Ozempic, Wegovy, Mounjaro and Zepbound.">
 <meta name="robots" content="index, follow">
@@ -116,7 +116,7 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
 
 /* ---------- nav ---------- */
 .nav{
-  position:fixed;top:0;left:0;right:0;height:72px;z-index:100;
+  position:fixed;top:0;left:0;right:0;height:calc(72px + env(safe-area-inset-top));padding-top:env(safe-area-inset-top);z-index:100;
   background:rgba(250,249,244,0.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   border-bottom:1px solid var(--border-light);
   transition:box-shadow 300ms var(--ease);
@@ -158,7 +158,7 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
   position:fixed;top:0;right:-290px;width:280px;height:100vh;z-index:200;
   background:#fff;box-shadow:-8px 0 32px rgba(0,0,0,0.1);
   transition:right 350ms var(--ease);
-  padding:24px;display:flex;flex-direction:column;gap:6px;
+  padding:calc(24px + env(safe-area-inset-top)) 24px 24px;display:flex;flex-direction:column;gap:6px;
 }
 .drawer.open{right:0}
 .drawer-close{align-self:flex-end;background:none;border:none;cursor:pointer;width:44px;height:44px;font-size:26px;color:var(--text-secondary)}
@@ -596,7 +596,7 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
 .plan-overlay.open{opacity:1;pointer-events:auto;transform:translateY(0)}
 .plan-head{
   flex-shrink:0;background:rgba(250,250,248,0.94);backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--border);padding:16px 20px;
+  border-bottom:1px solid var(--border);padding:calc(16px + env(safe-area-inset-top)) 20px 16px;
   display:flex;align-items:center;gap:14px;
 }
 .plan-head-title{flex:1;min-width:0}
@@ -784,7 +784,7 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
 
 /* ---------- nutritionist chat widget ---------- */
 .chat-fab{
-  position:fixed;bottom:24px;right:24px;z-index:300;
+  position:fixed;bottom:calc(24px + env(safe-area-inset-bottom));right:24px;z-index:300;
   display:flex;align-items:center;gap:10px;
   background:var(--accent);color:#fff;border:none;cursor:pointer;
   height:56px;padding:0 22px;border-radius:100px;
@@ -795,7 +795,7 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
 .chat-fab:hover{background:var(--accent-dark);transform:translateY(-3px);box-shadow:0 12px 32px rgba(124,179,66,0.5)}
 .chat-fab svg{width:20px;height:20px;stroke:#fff}
 .chat-panel{
-  position:fixed;bottom:24px;right:24px;z-index:310;
+  position:fixed;bottom:calc(24px + env(safe-area-inset-bottom));right:24px;z-index:310;
   width:min(380px, calc(100vw - 32px));height:min(560px, calc(100vh - 100px));
   background:#fff;border:1px solid var(--border);border-radius:24px;
   box-shadow:0 24px 64px rgba(26,26,26,0.22);
@@ -2356,6 +2356,7 @@ function startSetup(){
       addMsg(v === 'skip' ? 'Skip' : DAY_NAMES[v], 'user');
       if (typeof v === 'number') {
         addMsg("Perfect — I'll plan your week around " + DAY_NAMES[v] + "s from now on.", 'bot');
+        scheduleNativeReminders();
       }
       startCheckin();
     });
@@ -2363,6 +2364,38 @@ function startSetup(){
   }
   startCheckin();
 }
+
+// ---- Native app bridge (no-op on the web) ----
+// When Plate runs inside its iOS app shell, schedule on-device reminders
+// around the user's injection cycle. This is the "real app functionality"
+// that satisfies App Review guideline 4.2.
+function scheduleNativeReminders(){
+  try {
+    if (!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform())) return;
+    var LN = window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications;
+    if (!LN || typeof plateState.shotDay !== 'number') return;
+    LN.requestPermissions().then(function(res){
+      if (!res || res.display !== 'granted') return;
+      var dayBefore = ((plateState.shotDay - 1) + 7) % 7;
+      LN.cancel({ notifications: [{ id: 101 }, { id: 102 }] }).catch(function(){});
+      LN.schedule({ notifications: [
+        {
+          id: 101,
+          title: 'Shot day tomorrow',
+          body: "I've planned tomorrow gentle — cold, bland, protein-first. You've got this \ud83c\udf31",
+          schedule: { on: { weekday: dayBefore + 1, hour: 18, minute: 0 }, repeats: true }
+        },
+        {
+          id: 102,
+          title: 'Morning check-in',
+          body: "How's your stomach today? 10 seconds and your meals adjust.",
+          schedule: { on: { weekday: plateState.shotDay + 1, hour: 9, minute: 0 }, repeats: true }
+        }
+      ]}).catch(function(){});
+    }).catch(function(){});
+  } catch(e){}
+}
+scheduleNativeReminders();
 
 function chatOnOpen(){
   if (plateState.checkinDate === todayKey()) return; // already checked in today
