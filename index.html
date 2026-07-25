@@ -1676,6 +1676,15 @@ function openRooms(){
     var grid = document.querySelector('#rooms .rooms-grid');
     var note = document.querySelector('#rooms .rooms-note');
     roomsPane.innerHTML = (grid ? grid.outerHTML : '') + (note ? note.outerHTML : '');
+    // clones must not wait for scroll-reveal animations that will never fire here
+    roomsPane.querySelectorAll('*').forEach(function(el){
+      el.classList.remove('stagger', 'reveal');
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+      el.style.filter = 'none';
+      el.style.animation = 'none';
+      el.style.transition = 'none';
+    });
     roomsPane.addEventListener('click', function(e){
       var card = e.target.closest('[data-persona]');
       if (!card) return;
