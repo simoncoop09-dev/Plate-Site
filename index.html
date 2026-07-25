@@ -1850,11 +1850,62 @@ function buildPlan(){
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
   })
-  .then(function(res){ return res.json().then(function(d){ return { ok: res.ok, d: d }; }); })
-  .then(function(r){
-    if (!r.ok || !r.d || !r.d.days) throw new Error((r.d && r.d.error) || 'Could not build your plan.');
-    finish(null, r.d);
+  .then(function(res){
+    var ct = (res.headers.get('content-type') || '');
+    if (!res.ok || ct.indexOf('json') !== -1) {
+      // server sent a JSON error instead of a stream
+      return res.json().then(function(d){
+        throw new Error((d && d.error) || 'Could not build your plan.');
+      });
+    }
+    var reader = res.body.getReader();
+    var dec = new TextDecoder();
+    var buf = '';
+    var text = '';
+    function pump(){
+      return reader.read().then(function(r){
+        if (r.done) return text;
+        buf += dec.decode(r.value, { stream: true });
+        var lines = buf.split('\n');
+        buf = lines.pop();
+        lines.forEach(function(line){
+          if (line.indexOf('data: ') !== 0) return;
+          var payload = line.slice(6).trim();
+          if (!payload) return;
+          try {
+            var evt = JSON.parse(payload);
+            if (evt.type === 'content_block_delta' && evt.delta && evt.delta.text) {
+              text += evt.delta.text;
+            }
+            if (evt.type === 'error' || (evt.error && evt.error.message)) {
+              throw new Error((evt.error && evt.error.message) || 'stream error');
+            }
+          } catch(e){ if (e.message !== undefined && e instanceof Error && e.message.indexOf('JSON') === -1) throw e; }
+        });
+        var dayCount = (text.match(/"day"/g) || []).length;
+        if (dayCount > 0) {
+          clearInterval(spin);
+          pbLoadingText.textContent = 'Writing day ' + Math.min(dayCount, 7) + ' of 7...';
+        }
+        return pump();
+      });
+    }
+    return pump().then(function(full){
+      full = full.replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
+      if (full.charAt(0) !== '{') full = '{' + full;
+      var plan = null;
+      try { plan = JSON.parse(full); } catch(e){
+        var a = full.indexOf('{'), b = full.lastIndexOf('}');
+        if (a !== -1 && b > a) { try { plan = JSON.parse(full.slice(a, b + 1)); } catch(e2){} }
+      }
+      if (!plan || !Array.isArray(plan.days) || !plan.days.length) {
+        throw new Error('Your plan came back garbled. Please try once more.');
+      }
+      if (!plan.proteinGoal) plan.proteinGoal = goal;
+      return plan;
+    });
   })
+  .then(function(plan){ finish(null, plan); })
   .catch(function(e){ finish((e && e.message) || 'Could not build your plan. Please try again.'); });
 }
 pbSubmit.addEventListener('click', buildPlan);
