@@ -4,6 +4,25 @@
 
 export const config = { maxDuration: 60 };
 
+// ---- Rate limiting (in-memory, per warm instance) ----
+// Not perfect (cold starts reset it) but blocks sustained abuse cheaply.
+const RL = globalThis.__plateRL || (globalThis.__plateRL = new Map());
+function rateLimit(req, kind, perDay, minGapMs) {
+  const ip = (req.headers['x-forwarded-for'] || 'unknown').split(',')[0].trim();
+  const day = new Date().toISOString().slice(0, 10);
+  const key = kind + ':' + ip;
+  const now = Date.now();
+  let rec = RL.get(key);
+  if (!rec || rec.day !== day) rec = { day, count: 0, last: 0 };
+  if (now - rec.last < minGapMs) return { ok: false, why: 'burst' };
+  if (rec.count >= perDay) return { ok: false, why: 'daily' };
+  rec.count++; rec.last = now;
+  RL.set(key, rec);
+  if (RL.size > 5000) { const k = RL.keys().next().value; RL.delete(k); }
+  return { ok: true };
+}
+
+
 const CORE_RULES =
   "You are an AI companion inside Plate, an app for people taking GLP-1 medications (Ozempic, Wegovy, " +
   "Mounjaro, Zepbound). " +
@@ -113,6 +132,19 @@ export default async function handler(req, res) {
     return;
   }
 
+  const rl = rateLimit(req, 'chat', 80, 1200);
+  if (!rl.ok) {
+    res.status(429).json({ error: rl.why === 'daily'
+      ? "You've reached today's chat limit — see you tomorrow! \ud83c\udf31"
+      : 'One sec — sending too fast.' });
+    return;
+  }
+  let messages = Array.isArray(body.messages) ? body.messages.slice(-30) : [];
+  messages = messages.map(m => ({
+    role: m && m.role === 'assistant' ? 'assistant' : 'user',
+    content: String((m && m.content) || '').slice(0, 4000)
+  })).filter(m => m.content);
+  body.messages = messages;
   const ctx = typeof body.context === 'string' ? body.context.slice(0, 600) : '';
   const personaKey = (typeof body.persona === 'string' && PERSONAS[body.persona]) ? body.persona : 'libby';
   const SYSTEM_PROMPT = CORE_RULES + PERSONAS[personaKey];
