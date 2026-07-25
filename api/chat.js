@@ -2,6 +2,8 @@
 // Keeps your Anthropic API key secret and streams replies so long answers never time out.
 // Set the ANTHROPIC_API_KEY environment variable in your Vercel project settings.
 
+export const config = { maxDuration: 60 };
+
 const SYSTEM_PROMPT =
   "You are Libby, the AI companion inside Plate, an app for people taking GLP-1 medications " +
   "(Ozempic, Wegovy, Mounjaro, Zepbound). Always refer to yourself as Libby. " +
