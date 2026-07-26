@@ -909,41 +909,63 @@ body.seeing-site .dash{display:none}
 }
 .meal-ask:hover{text-decoration:underline}
 
-/* grocery */
+/* grocery — market list */
+.g-summary{
+  font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:17px;
+  color:var(--text-secondary);margin:4px 0 8px;
+}
+.g-summary b{font-style:normal;font-weight:600;color:var(--accent-dark)}
+.g-progress{height:3px;background:rgba(32,41,26,0.08);border-radius:3px;overflow:hidden;margin-bottom:14px}
+.g-progress i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,#AED581,var(--accent-dark));transition:width 500ms var(--ease)}
+.grocery-actions{display:flex;gap:20px;align-items:center;margin-bottom:26px;flex-wrap:wrap}
+.grocery-actions .btn{height:46px;font-size:14px;padding:0 20px}
+.g-textbtn{
+  font-family:inherit;background:none;border:none;cursor:pointer;padding:0;
+  font-size:13.5px;font-weight:700;color:var(--text-secondary);
+}
+.g-textbtn:hover{color:var(--accent-dark)}
+
+.aisle{margin-bottom:34px}
+.aisle-name{
+  font-family:'Fraunces',Georgia,serif;font-size:21px;font-weight:600;letter-spacing:-0.01em;
+  text-transform:none;color:var(--text-primary);
+  display:flex;align-items:baseline;gap:10px;margin-bottom:4px;
+}
+.aisle-name small{font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:var(--text-tertiary);letter-spacing:0}
+.aisle-name::after{content:none}
+
+.g-item{
+  display:flex;align-items:center;gap:14px;
+  background:none;border:none;border-radius:12px;
+  padding:13px 4px;margin:0;
+  border-top:1px solid var(--border);
+  cursor:pointer;transition:background 200ms ease, opacity 300ms ease;
+}
+.aisle .g-item:last-child{border-bottom:1px solid var(--border)}
+.g-item:hover{background:rgba(255,255,255,0.6);border-color:var(--border)}
+.g-box{
+  width:25px;height:25px;border-radius:50%;border:1.5px solid rgba(32,41,26,0.22);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 260ms cubic-bezier(0.34,1.56,0.64,1);
+}
+.g-box svg{width:12px;height:12px;stroke:#fff;opacity:0;transform:scale(0.4);transition:all 260ms cubic-bezier(0.34,1.56,0.64,1)}
+.g-item:hover .g-box{border-color:var(--accent)}
+.g-item.done .g-box{background:var(--accent);border-color:var(--accent);transform:scale(1.06)}
+.g-item.done .g-box svg{opacity:1;transform:scale(1)}
+.g-text{flex:1;font-size:15.5px;font-weight:500;line-height:1.4;text-transform:capitalize;transition:color 250ms ease}
+.g-text small{display:inline;font-size:12.5px;font-weight:400;color:var(--text-tertiary);margin-left:8px;text-transform:none}
+.g-item.done{opacity:0.55}
+.g-item.done .g-text{text-decoration:line-through;text-decoration-color:rgba(32,41,26,0.3);color:var(--text-tertiary)}
 .g-amz{
   flex-shrink:0;display:flex;align-items:center;justify-content:center;
-  width:32px;height:32px;border-radius:9px;
-  background:var(--bg-surface);border:1px solid var(--border);
+  width:30px;height:30px;border-radius:50%;
+  background:none;border:none;opacity:0.4;
   transition:all 200ms ease;text-decoration:none;
 }
-.g-amz:hover{border-color:var(--accent);background:rgba(124,179,66,0.08)}
+.g-amz:hover{opacity:1;background:rgba(124,179,66,0.1)}
 .g-amz svg{width:15px;height:15px;stroke:var(--text-secondary)}
-.g-item.done .g-amz{opacity:0.35;pointer-events:none}
-
-.grocery-actions{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
-.grocery-actions .btn{height:44px;font-size:14px;padding:0 18px}
-.aisle{margin-bottom:24px}
-.aisle-name{
-  font-size:11.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
-  color:var(--accent-dark);margin-bottom:10px;display:flex;align-items:center;gap:8px;
-}
-.aisle-name::after{content:'';flex:1;height:1px;background:var(--border)}
-.g-item{
-  display:flex;align-items:center;gap:12px;background:#fff;
-  border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;
-  cursor:pointer;transition:all 200ms ease;
-}
-.g-item:hover{border-color:rgba(124,179,66,0.4)}
-.g-box{
-  width:22px;height:22px;border-radius:7px;border:2px solid var(--border);flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;transition:all 200ms ease;
-}
-.g-box svg{width:12px;height:12px;stroke:#fff;opacity:0}
-.g-item.done .g-box{background:var(--accent);border-color:var(--accent)}
-.g-item.done .g-box svg{opacity:1}
-.g-text{flex:1;font-size:15px;line-height:1.4}
-.g-text small{display:block;font-size:12.5px;color:var(--text-tertiary);margin-top:1px}
-.g-item.done .g-text{text-decoration:line-through;color:var(--text-tertiary)}
+.g-amz:hover svg{stroke:var(--accent-dark)}
+.g-item.done .g-amz{opacity:0.15;pointer-events:none}
 
 /* plan builder form */
 .pb-label{font-size:13px;font-weight:700;letter-spacing:0.02em;margin:20px 0 10px;display:block}
@@ -2739,23 +2761,25 @@ function renderGrocery(){
     if (AMAZON_ASIN_MAP[k] && !groceryChecked[k]) mappedAsins.push(AMAZON_ASIN_MAP[k]);
   });
 
-  var html = '<div class="grocery-actions">' +
+  var pct = total ? Math.round((doneCount / total) * 100) : 0;
+  var html = '<div class="g-summary"><b>' + doneCount + ' of ' + total + '</b> picked up \u2014 your whole week, sorted by aisle</div>' +
+    '<div class="g-progress"><i style="width:' + pct + '%"></i></div>' +
+    '<div class="grocery-actions">' +
     (instacartEnabled
       ? '<button class="btn btn-primary" id="gInstacart" type="button">Shop with Instacart</button>'
       : '') +
     (mappedAsins.length
       ? '<button class="btn ' + (instacartEnabled ? 'btn-secondary' : 'btn-primary') + '" id="gAmzCart" type="button">Amazon cart (' + mappedAsins.length + ' items)</button>'
       : '') +
-    '<button class="btn btn-secondary" id="gCopy" type="button">Copy list</button>' +
-    '<button class="btn btn-secondary" id="gReset" type="button">Uncheck all</button>' +
-    '</div>' +
-    '<div class="day-note"><strong>' + doneCount + ' of ' + total + '</strong> items picked up &middot; everything for your 7-day plan, sorted by aisle.</div>';
+    '<button class="g-textbtn" id="gCopy" type="button">Copy list</button>' +
+    '<button class="g-textbtn" id="gReset" type="button">Uncheck all</button>' +
+    '</div>';
 
   AISLE_ORDER.forEach(function(aisle){
     var items = byAisle[aisle];
     if (!items || !items.length) return;
     items.sort(function(a,b){ return a.item.localeCompare(b.item); });
-    html += '<div class="aisle"><div class="aisle-name">' + esc(aisle) + '</div>';
+    html += '<div class="aisle"><div class="aisle-name">' + esc(aisle.charAt(0) + aisle.slice(1).toLowerCase()) + '<small>' + items.length + (items.length === 1 ? ' item' : ' items') + '</small></div>';
     items.forEach(function(it){
       var key = it.item.toLowerCase().trim();
       var sub = it.count > 1 ? ('used in ' + it.count + ' meals') : (it.qtys[0] || '');
