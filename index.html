@@ -982,8 +982,8 @@ body.seeing-site .dash{display:none}
 .g-item.done .g-box svg{opacity:1;transform:scale(1)}
 .g-text{flex:1;font-size:15px;font-weight:500;line-height:1.4;text-transform:capitalize;transition:color 250ms ease}
 .g-text small{display:inline;font-size:12.5px;font-weight:400;color:var(--text-tertiary);margin-left:8px;text-transform:none}
-.g-item.done{opacity:0.5}
-.g-item.done .g-text{text-decoration:line-through;text-decoration-color:rgba(32,41,26,0.3);color:var(--text-tertiary)}
+.g-item.done{background:rgba(124,179,66,0.07);border-radius:12px}
+.g-item.done .g-text{color:var(--text-primary);font-weight:600}
 .g-amz{
   flex-shrink:0;display:flex;align-items:center;justify-content:center;
   width:30px;height:30px;border-radius:50%;
@@ -992,7 +992,7 @@ body.seeing-site .dash{display:none}
 }
 .g-amz:hover{opacity:1;background:rgba(124,179,66,0.1)}
 .g-amz svg{width:15px;height:15px;stroke:var(--text-secondary)}
-.g-item.done .g-amz{opacity:0.15;pointer-events:none}
+.g-item.done .g-amz{opacity:0.5}
 
 /* plan builder form */
 .pb-label{font-size:13px;font-weight:700;letter-spacing:0.02em;margin:20px 0 10px;display:block}
@@ -2818,20 +2818,20 @@ function renderGrocery(){
   var mappedAsins = [];
   var mappedWm = [];
   Object.keys(map).forEach(function(k){
-    if (AMAZON_ASIN_MAP[k] && !groceryChecked[k]) mappedAsins.push(AMAZON_ASIN_MAP[k]);
-    if (WALMART_ITEM_MAP[k] && !groceryChecked[k]) mappedWm.push(WALMART_ITEM_MAP[k]);
+    if (AMAZON_ASIN_MAP[k] && groceryChecked[k]) mappedAsins.push(AMAZON_ASIN_MAP[k]);
+    if (WALMART_ITEM_MAP[k] && groceryChecked[k]) mappedWm.push(WALMART_ITEM_MAP[k]);
   });
 
   var pct = total ? Math.round((doneCount / total) * 100) : 0;
   var html = '<div class="dash-card g-topcard">' +
-    '<div class="g-summary"><b>' + doneCount + ' of ' + total + '</b> picked up \u2014 your whole week, sorted by aisle</div>' +
+    '<div class="g-summary"><b>' + doneCount + ' of ' + total + '</b> selected \u2014 tap items to add them to your cart</div>' +
     '<div class="g-progress"><i style="width:' + pct + '%"></i></div>' +
     '<div class="grocery-actions">' +
     (instacartEnabled
       ? '<button class="btn btn-primary" id="gInstacart" type="button">Shop with Instacart</button>'
       : '') +
     (walmartResolverEnabled
-      ? '<button class="btn ' + (instacartEnabled ? 'btn-secondary' : 'btn-primary') + '" id="gWmOrder" type="button">Order my week at Walmart</button>'
+      ? '<button class="btn ' + (instacartEnabled ? 'btn-secondary' : 'btn-primary') + '" id="gWmOrder" type="button"' + (doneCount ? '' : ' disabled') + '>Order selected at Walmart (' + doneCount + ')</button>'
       : (mappedWm.length
         ? '<button class="btn ' + (instacartEnabled ? 'btn-secondary' : 'btn-primary') + '" id="gWmCart" type="button">Walmart cart (' + mappedWm.length + ' items)</button>'
         : '')) +
@@ -2852,7 +2852,7 @@ function renderGrocery(){
     var startCollapsed = aisleCollapsed.hasOwnProperty(aisle) ? aisleCollapsed[aisle] : doneAisle;
     html += '<div class="aisle' + (startCollapsed ? ' collapsed' : '') + (doneAisle ? ' done-aisle' : '') + '" data-aisle="' + esc(aisle) + '"><div class="aisle-head">' +
       '<span class="g-ic ' + meta.cls + '">' + meta.svg + '</span>' +
-      '<span class="aisle-name">' + esc(aisle) + '<small class="aisle-count">' + (doneAisle ? 'All picked up \u2713' : left + ' of ' + items.length + ' left') + '</small></span>' +
+      '<span class="aisle-name">' + esc(aisle) + '<small class="aisle-count">' + (doneAisle ? 'All selected \u2713' : (items.length - left) + ' of ' + items.length + ' selected') + '</small></span>' +
       '<span class="aisle-chev"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span>' +
       '</div><div class="aisle-body"><div class="aisle-body-inner">';
     items.forEach(function(it){
@@ -2878,7 +2878,7 @@ function renderGrocery(){
     icBtn.textContent = 'Building your cart...';
     var items = [];
     Object.keys(map).forEach(function(k){
-      if (!groceryChecked[k]) items.push({ name: map[k].item, quantity: 1 });
+      if (groceryChecked[k]) items.push({ name: map[k].item, quantity: 1 });
     });
     fetch('/api/instacart', {
       method: 'POST',
@@ -2900,7 +2900,7 @@ function renderGrocery(){
 
   var wmOrder = document.getElementById('gWmOrder');
   if (wmOrder) wmOrder.addEventListener('click', function(){
-    var names = Object.keys(map).filter(function(k){ return !groceryChecked[k]; });
+    var names = Object.keys(map).filter(function(k){ return groceryChecked[k]; });
     if (!names.length) return;
     wmOrder.disabled = true;
     wmOrder.textContent = 'Building your cart\u2026';
@@ -2956,7 +2956,7 @@ function renderGrocery(){
         var rows = card.querySelectorAll('.g-item');
         var leftNow = card.querySelectorAll('.g-item:not(.done)').length;
         var countEl = card.querySelector('.aisle-count');
-        if (countEl) countEl.textContent = leftNow === 0 ? 'All picked up \u2713' : leftNow + ' of ' + rows.length + ' left';
+        if (countEl) countEl.textContent = leftNow === 0 ? 'All selected \u2713' : (rows.length - leftNow) + ' of ' + rows.length + ' selected';
         card.classList.toggle('done-aisle', leftNow === 0);
         if (leftNow === 0) {
           setTimeout(function(){
@@ -2975,6 +2975,11 @@ function renderGrocery(){
       if (sb) sb.textContent = d + ' of ' + t;
       var bar = groceryPane.querySelector('.g-progress i');
       if (bar) bar.style.width = (t ? Math.round((d / t) * 100) : 0) + '%';
+      var ob = document.getElementById('gWmOrder');
+      if (ob) {
+        ob.textContent = 'Order selected at Walmart (' + d + ')';
+        ob.disabled = d === 0;
+      }
     });
   });
 
