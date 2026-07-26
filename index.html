@@ -2669,12 +2669,12 @@ var pbError = document.getElementById('pbError');
 var pbSubmit = document.getElementById('pbSubmit');
 var pbGoalHint = document.getElementById('pbGoalHint');
 
-var AISLE_ORDER = ['Produce','Meat & Seafood','Dairy & Eggs','Bakery','Frozen','Pantry','Other'];
+var AISLE_ORDER = ['Produce','Meat & Seafood','Dairy & Eggs','Bakery','Frozen','Pantry','Other','Pantry check'];
 var aisleCollapsed = {};
 var wmMapped = [];
 var amzMapped = [];
 function syncCartState(){
-  var m = buildGroceryItems();
+  var m = getShoppingItems();
   wmMapped.length = 0; amzMapped.length = 0;
   Object.keys(m).forEach(function(k){
     if (WALMART_ITEM_MAP[k] && groceryChecked[k]) wmMapped.push(WALMART_ITEM_MAP[k]);
@@ -2706,7 +2706,8 @@ var AISLE_META = {
   'Bakery':         { cls: 'gi-bakery',  svg: '<svg viewBox="0 0 24 24"><path d="M4 12c0-3.5 3.5-6 8-6s8 2.5 8 6c0 1.5-1 2.5-2 2.5V19a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19v-4.5c-1 0-2-1-2-2.5Z"/><path d="M10 9.5v2"/><path d="M14 9.5v2"/></svg>' },
   'Frozen':         { cls: 'gi-frozen',  svg: '<svg viewBox="0 0 24 24"><path d="M12 2v20"/><path d="M4 7l16 10"/><path d="M20 7 4 17"/><path d="m9 4 3 2 3-2"/><path d="m9 20 3-2 3 2"/></svg>' },
   'Pantry':         { cls: 'gi-pantry',  svg: '<svg viewBox="0 0 24 24"><path d="M7 8h10v11a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V8Z"/><path d="M8.5 8V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v2"/><path d="M7 12h10"/></svg>' },
-  'Other':          { cls: 'gi-other',   svg: '<svg viewBox="0 0 24 24"><path d="M6 7h12l1.5 13a1.8 1.8 0 0 1-1.8 2H6.3a1.8 1.8 0 0 1-1.8-2L6 7Z"/><path d="M9 10V5.5a3 3 0 0 1 6 0V10"/></svg>' }
+  'Other':          { cls: 'gi-other',   svg: '<svg viewBox="0 0 24 24"><path d="M6 7h12l1.5 13a1.8 1.8 0 0 1-1.8 2H6.3a1.8 1.8 0 0 1-1.8-2L6 7Z"/><path d="M9 10V5.5a3 3 0 0 1 6 0V10"/></svg>' },
+  'Pantry check':   { cls: 'gi-other',   svg: '<svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 10h16"/><path d="M9 14l2 2 4-4"/></svg>' }
 };
 
 // ===== Amazon integration =====
@@ -3131,9 +3132,28 @@ groceryPane.addEventListener('click', function(e){
   }
 });
 
+function getShoppingItems(){
+  if (currentPlan && Array.isArray(currentPlan.shopping) && currentPlan.shopping.length) {
+    var out = {};
+    currentPlan.shopping.forEach(function(s){
+      if (!s || !s.item) return;
+      var k = String(s.item).toLowerCase().trim();
+      out[k] = {
+        item: String(s.item),
+        qtys: [String(s.buy || '')],
+        count: 1,
+        aisle: s.staple ? 'Pantry check' : (AISLE_ORDER.indexOf(s.aisle) !== -1 ? s.aisle : 'Other'),
+        staple: !!s.staple
+      };
+    });
+    return out;
+  }
+  return buildGroceryItems();
+}
+
 function renderGrocery(){
   if (!currentPlan) return;
-  var map = buildGroceryItems();
+  var map = getShoppingItems();
   var byAisle = {};
   Object.keys(map).forEach(function(k){
     var it = map[k];
@@ -3153,7 +3173,7 @@ function renderGrocery(){
 
   var pct = total ? Math.round((doneCount / total) * 100) : 0;
   var html = '<div class="dash-card g-topcard">' +
-    '<div class="g-summary"><b>' + doneCount + ' of ' + total + '</b> selected \u2014 tap items to add them to your cart</div>' +
+    '<div class="g-summary"><b>' + doneCount + ' of ' + total + '</b> selected \u2014 tap what you need; quantities cover your whole week</div>' +
     '<div class="g-progress"><i style="width:' + pct + '%"></i></div>' +
     '<div class="grocery-actions">' +
     (instacartEnabled
@@ -3176,12 +3196,13 @@ function renderGrocery(){
     if (!items || !items.length) return;
     items.sort(function(a,b){ return a.item.localeCompare(b.item); });
     var meta = AISLE_META[aisle] || AISLE_META['Other'];
+    var isPantryCheck = aisle === 'Pantry check';
     var left = items.filter(function(x){ return !groceryChecked[x.item.toLowerCase().trim()]; }).length;
     var doneAisle = left === 0;
     var startCollapsed = aisleCollapsed.hasOwnProperty(aisle) ? aisleCollapsed[aisle] : doneAisle;
     html += '<div class="aisle' + (startCollapsed ? ' collapsed' : '') + (doneAisle ? ' done-aisle' : '') + '" data-aisle="' + esc(aisle) + '"><div class="aisle-head">' +
       '<span class="g-ic ' + meta.cls + '">' + meta.svg + '</span>' +
-      '<span class="aisle-name">' + esc(aisle) + '<small class="aisle-count">' + (doneAisle ? 'All selected \u2713' : (items.length - left) + ' of ' + items.length + ' selected') + '</small></span>' +
+      '<span class="aisle-name">' + esc(aisle) + '<small class="aisle-count">' + (isPantryCheck ? 'You probably have these \u2014 grab what\u2019s missing' : (doneAisle ? 'All selected \u2713' : (items.length - left) + ' of ' + items.length + ' selected')) + '</small></span>' +
       '<span class="aisle-chev"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span>' +
       '</div><div class="aisle-body"><div class="aisle-body-inner">';
     items.forEach(function(it){
@@ -3287,7 +3308,7 @@ function renderGrocery(){
           aisleCollapsed[card.getAttribute('data-aisle')] = false;
         }
       }
-      var m = buildGroceryItems();
+      var m = getShoppingItems();
       var t = Object.keys(m).length;
       var d = Object.keys(m).filter(function(x){ return groceryChecked[x]; }).length;
       var sb = groceryPane.querySelector('.g-summary b');
