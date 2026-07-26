@@ -606,6 +606,13 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
 }
 body.has-dash .dash{display:block}
 body.has-dash .hero{display:none}
+body.has-dash .landing{display:none}
+body.has-dash .nav-links{display:none}
+body.has-dash .drawer a[href^="#"]{display:none}
+body.seeing-site .landing{display:block}
+body.seeing-site footer.landing{display:block}
+body.seeing-site .hero{display:flex}
+body.seeing-site .dash{display:none}
 .dash-inner{max-width:620px;margin:0 auto;position:relative;z-index:1;perspective:1200px}
 
 .dIn{opacity:0;transform:translateY(30px) rotateX(7deg) scale(0.98);filter:blur(8px);
@@ -1304,7 +1311,7 @@ body.has-dash .hero{display:none}
 </header>
 
 <!-- 3. FEATURES -->
-<section class="section" id="features">
+<section class="section landing" id="features">
   <div class="container">
     <div class="section-head reveal">
       <span class="pill"><span class="pill-dot"></span>Why Plate</span>
@@ -1329,7 +1336,7 @@ body.has-dash .hero{display:none}
 </section>
 
 <!-- 4. HOW IT WORKS -->
-<section class="section bg-white" id="how-it-works">
+<section class="section bg-white landing" id="how-it-works">
   <div class="container">
     <div class="section-head reveal">
       <span class="pill"><span class="pill-dot"></span>How It Works</span>
@@ -1364,7 +1371,7 @@ body.has-dash .hero{display:none}
 </section>
 
 <!-- 4.5 THE PLATE CYCLE -->
-<section class="cycle-section" id="cycle">
+<section class="cycle-section landing" id="cycle">
   <div class="blob cy-blob-1"></div>
   <div class="blob cy-blob-2"></div>
   <div class="container">
@@ -1404,7 +1411,7 @@ body.has-dash .hero{display:none}
 </section>
 
 <!-- 4.7 SUPPORT ROOMS -->
-<section class="section bg-white" id="rooms">
+<section class="section bg-white landing" id="rooms">
   <div class="container">
     <div class="section-head reveal">
       <span class="pill"><span class="pill-dot"></span>Support rooms</span>
@@ -1450,7 +1457,7 @@ body.has-dash .hero{display:none}
 </section>
 
 <!-- 6. PRICING -->
-<section class="section bg-white" id="pricing">
+<section class="section bg-white landing" id="pricing">
   <div class="container">
     <div class="section-head reveal">
       <span class="pill"><span class="pill-dot"></span>Pricing</span>
@@ -1494,7 +1501,7 @@ body.has-dash .hero{display:none}
 
 
 <!-- 8. FAQ -->
-<section class="section bg-white" id="faq">
+<section class="section bg-white landing" id="faq">
   <div class="container">
     <div class="section-head reveal">
       <span class="pill"><span class="pill-dot"></span>FAQ</span>
@@ -1536,7 +1543,7 @@ body.has-dash .hero{display:none}
 </section>
 
 <!-- 9. CTA -->
-<section class="cta">
+<section class="cta landing">
   <div class="blob cta-blob-1"></div>
   <div class="blob cta-blob-2"></div>
   <div class="container reveal">
@@ -1548,7 +1555,7 @@ body.has-dash .hero{display:none}
 </section>
 
 <!-- 10. FOOTER -->
-<footer class="footer">
+<footer class="footer landing">
   <div class="container">
     <div class="footer-grid">
       <div>
@@ -2056,8 +2063,7 @@ if (dashRoomsLink) dashRoomsLink.addEventListener('click', function(){
   if (typeof setActiveTab === 'function') setActiveTab('tabRooms');
 });
 document.getElementById('dashAbout').addEventListener('click', function(){
-  var hero = document.querySelector('.hero');
-  document.body.classList.remove('has-dash');
+  document.body.classList.add('seeing-site');
   window.scrollTo({ top: 0, behavior: 'auto' });
   track('dash_see_site');
 });
@@ -2108,6 +2114,7 @@ var tabHome = document.getElementById('tabHome');
 if (tabHome) {
   tabHome.addEventListener('click', function(){
     closePlan(); closeChat(); closeWaitlist(); closePlanBuilder(); closeRooms(); closeTakeout();
+    document.body.classList.remove('seeing-site');
     renderDash();
     window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
     setActiveTab('tabHome');
