@@ -1188,6 +1188,38 @@ body.seeing-site .dash{display:none}
   .ring{--deg:252deg}
 }
 
+/* ---------- the dish: Plate's signature 3D object ---------- */
+.dish-wrap{
+  position:absolute;right:2%;bottom:2%;
+  width:min(520px,58vw);aspect-ratio:1;
+  perspective:1200px;pointer-events:none;
+  will-change:transform;
+}
+@media(max-width:959px){.dish-wrap{right:-18%;bottom:-6%;width:min(420px,85vw);opacity:0.8}}
+.dish{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(58deg)}
+.dish-spin{position:absolute;inset:0;transform-style:preserve-3d;animation:dishSpin 42s linear infinite}
+@keyframes dishSpin{to{transform:rotateZ(360deg)}}
+.dish-layer{position:absolute;border-radius:50%}
+.dl-base{inset:0;background:#EFE7D5;border:2px solid rgba(29,26,20,0.2);transform:translateZ(-16px);
+  box-shadow:inset 0 0 60px rgba(29,26,20,0.08)}
+.dl-glaze{inset:5%;border:10px solid rgba(194,74,38,0.85);background:transparent;transform:translateZ(-6px)}
+.dl-well{inset:16%;background:#F7F1E4;border:1.5px solid rgba(29,26,20,0.14);transform:translateZ(-24px);
+  box-shadow:inset 0 6px 30px rgba(29,26,20,0.12)}
+.dl-ring{inset:30%;border:1.5px dashed rgba(29,26,20,0.25);background:transparent;transform:translateZ(-23px)}
+.dl-mark{width:5.5%;aspect-ratio:1;left:47.25%;top:6.5%;background:#1D1A14;transform:translateZ(-4px)}
+.dish-shadow{
+  position:absolute;left:8%;right:8%;bottom:-4%;height:14%;border-radius:50%;
+  background:radial-gradient(ellipse, rgba(29,26,20,0.22), transparent 70%);
+  filter:blur(10px);
+}
+@media(prefers-reduced-motion: reduce){.dish-spin{animation:none}}
+
+/* ---------- masked word reveal ---------- */
+.wline{display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:0.08em;margin-bottom:-0.08em}
+.wword{display:inline-block;transform:translateY(115%);animation:wRise 850ms cubic-bezier(0.16,1,0.3,1) forwards;animation-delay:var(--d,0ms)}
+@media(prefers-reduced-motion: reduce){.wword{transform:none;animation:none}}
+@keyframes wRise{to{transform:translateY(0)}}
+
 /* ================= CLAY & INK RESKIN ================= */
 :root{
   --bg-primary:#F7F1E6;
@@ -1433,6 +1465,18 @@ body{background:var(--bg-primary)}
     <div class="plate-orn po-1" aria-hidden="true"><svg viewBox="0 0 100 100"><circle class="po-rim" cx="50" cy="50" r="48"/><circle class="po-well" cx="50" cy="50" r="31"/></svg></div>
     <div class="plate-orn po-2" aria-hidden="true"><svg viewBox="0 0 100 100"><circle class="po-rim" cx="50" cy="50" r="48"/><circle class="po-well" cx="50" cy="50" r="30"/></svg></div>
     <div class="plate-orn po-3" aria-hidden="true"><svg viewBox="0 0 100 100"><circle class="po-rim" cx="50" cy="50" r="48"/><circle class="po-well" cx="50" cy="50" r="32"/></svg></div>
+    <div class="dish-wrap" aria-hidden="true">
+      <div class="dish-shadow"></div>
+      <div class="dish">
+        <div class="dish-spin">
+          <div class="dish-layer dl-base"></div>
+          <div class="dish-layer dl-glaze"></div>
+          <div class="dish-layer dl-well"></div>
+          <div class="dish-layer dl-ring"></div>
+          <div class="dish-layer dl-mark"></div>
+        </div>
+      </div>
+    </div>
     <div class="hero-golden" aria-hidden="true"></div>
     <div class="grain"></div>
   </div>
@@ -1962,6 +2006,57 @@ body{background:var(--bg-primary)}
 <script>
 var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+// Masked word-by-word headline reveal (hero h1)
+(function(){
+  var h1 = document.querySelector('.hero h1');
+  if (!h1 || reducedMotion) return;
+  h1.classList.remove('hi', 'hi-2');
+  h1.style.opacity = '1';
+  var delay = 150;
+  var out = [];
+  h1.childNodes.forEach(function(node){
+    if (node.nodeType === 3) {
+      node.textContent.split(/\s+/).forEach(function(w){
+        if (!w) return;
+        out.push('<span class="wline"><span class="wword" style="--d:' + delay + 'ms">' + w + '</span></span>');
+        delay += 70;
+      });
+    } else if (node.nodeType === 1) {
+      out.push('<span class="wline"><span class="wword" style="--d:' + delay + 'ms">' + node.outerHTML + '</span></span>');
+      delay += 70;
+    }
+  });
+  h1.innerHTML = out.join(' ');
+})();
+
+// Magnetic primary buttons (desktop): buttons lean toward a near cursor
+(function(){
+  if (reducedMotion || !(window.matchMedia && window.matchMedia('(pointer: fine)').matches)) return;
+  var mags = Array.prototype.slice.call(document.querySelectorAll('.hero .btn-primary, .cta .btn'));
+  if (!mags.length) return;
+  var mTick = false;
+  document.addEventListener('mousemove', function(e){
+    if (mTick) return;
+    mTick = true;
+    requestAnimationFrame(function(){
+      mTick = false;
+      mags.forEach(function(b){
+        var r = b.getBoundingClientRect();
+        var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+        var dx = e.clientX - cx, dy = e.clientY - cy;
+        var dist = Math.hypot(dx, dy);
+        var reach = 110;
+        if (dist < reach) {
+          var pull = (1 - dist / reach) * 8;
+          b.style.transform = 'translate(' + (dx / dist * pull) + 'px,' + (dy / dist * pull) + 'px)';
+        } else if (b.style.transform) {
+          b.style.transform = '';
+        }
+      });
+    });
+  }, { passive: true });
+})();
+
 // Golden-hour spotlight: a soft circle of richer light follows the cursor
 // (or drifts on its own on touch screens), revealing the sunset layer.
 (function(){
@@ -2004,11 +2099,31 @@ var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matche
 
 // Hero phone: scroll scrubs the shot (straightens + lifts as you scroll)
 var heroPhone = document.querySelector('.hero .phone');
+var dishWrap = document.querySelector('.dish-wrap');
+var dishTiltX = 0, dishTiltY = 0;
+(function(){
+  var heroEl = document.querySelector('.hero');
+  if (heroEl && dishWrap && window.matchMedia && window.matchMedia('(pointer: fine)').matches) {
+    heroEl.addEventListener('mousemove', function(e){
+      var r = heroEl.getBoundingClientRect();
+      dishTiltY = ((e.clientX - r.left) / r.width - 0.5) * 14;
+      dishTiltX = ((e.clientY - r.top) / r.height - 0.5) * -10;
+    });
+    heroEl.addEventListener('mouseleave', function(){ dishTiltX = 0; dishTiltY = 0; });
+  }
+})();
 var scrubTicking = false;
 function scrubPhone(){
   scrubTicking = false;
-  if (!heroPhone || reducedMotion) return;
+  if (reducedMotion) return;
   var p = Math.min(Math.max(window.scrollY / (window.innerHeight * 0.85), 0), 1);
+  if (dishWrap) {
+    dishWrap.style.transform =
+      'translateY(' + (p * 90) + 'px) translateX(' + (p * 40) + 'px)' +
+      ' rotateY(' + (dishTiltY * (1 - p)) + 'deg) rotateX(' + (dishTiltX * (1 - p)) + 'deg)' +
+      ' scale(' + (1 - p * 0.15) + ')';
+  }
+  if (!heroPhone) return;
   var ry = -10 + 12 * p;
   var rx = 5 - 5 * p;
   var ty = -34 * p;
@@ -2016,6 +2131,9 @@ function scrubPhone(){
   heroPhone.style.transform = 'perspective(1100px) rotateY(' + ry + 'deg) rotateX(' + rx + 'deg) translateY(' + ty + 'px) scale(' + sc + ')';
 }
 window.addEventListener('scroll', function(){
+  if (!scrubTicking) { scrubTicking = true; requestAnimationFrame(scrubPhone); }
+}, { passive: true });
+window.addEventListener('mousemove', function(){
   if (!scrubTicking) { scrubTicking = true; requestAnimationFrame(scrubPhone); }
 }, { passive: true });
 
