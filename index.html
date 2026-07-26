@@ -2838,8 +2838,10 @@ function renderGrocery(){
       var m = buildGroceryItems();
       var t = Object.keys(m).length;
       var d = Object.keys(m).filter(function(x){ return groceryChecked[x]; }).length;
-      var note = groceryPane.querySelector('.day-note strong');
-      if (note) note.textContent = d + ' of ' + t;
+      var sb = groceryPane.querySelector('.g-summary b');
+      if (sb) sb.textContent = d + ' of ' + t;
+      var bar = groceryPane.querySelector('.g-progress i');
+      if (bar) bar.style.width = (t ? Math.round((d / t) * 100) : 0) + '%';
     });
   });
 
