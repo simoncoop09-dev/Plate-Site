@@ -4,7 +4,7 @@
 const fs = require('fs');
 const https = require('https');
 
-const SITE = process.env.PLATE_SITE_URL || 'https://YOUR-SITE.vercel.app';
+const SITE = process.env.PLATE_SITE_URL || 'https://plateglp1.com';
 const FILES = ['index.html', 'manifest.json', 'icon-180.png', 'icon-192.png', 'icon-512.png'];
 
 fs.mkdirSync('www', { recursive: true });
