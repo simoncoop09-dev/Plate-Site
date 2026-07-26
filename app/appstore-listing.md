@@ -2,7 +2,7 @@
 
 **App name:** Plate — GLP-1 Meal Planner
 
-**Subtitle (30 chars):** Meals for your injection cycle
+**Subtitle (30 chars):** Meals for your shot week
 
 **Category:** Health & Fitness (secondary: Food & Drink)
 
@@ -18,7 +18,7 @@ Plate is the first meal planner built around the reality of GLP-1 medications.
 Your week on a GLP-1 has a rhythm — rough right after your shot, hungrier by
 the weekend. Plate plans around it.
 
-• 7-DAY MEAL PLANS THAT FOLLOW YOUR CYCLE
+• 7-DAY MEAL PLANS THAT FOLLOW YOUR SHOT WEEK
 Tell Plate your injection day once. Gentle, cold, protein-first meals for the
 rough days. Fuller meals when your appetite returns.
 
@@ -54,6 +54,6 @@ Plate is a nutrition companion for people taking GLP-1 medications. It does
 not provide medical advice, dosing guidance, or diagnosis; the AI assistant
 explicitly declines these and directs users to their physician (test it:
 ask "should I change my dose?"). Native functionality: on-device local
-notifications aligned to the user's self-reported injection cycle (set a
+notifications aligned to the user's self-reported shot week (set a
 shot day in the chat assistant to trigger scheduling). No account required.
 No purchases in the app. Medical disclaimer: https://plateglp1.com/disclaimer.html.
