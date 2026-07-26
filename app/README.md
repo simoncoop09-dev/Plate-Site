@@ -14,7 +14,7 @@ The code side is done; the steps below are in order.
 ```bash
 cd app
 npm install
-PLATE_SITE_URL=https://YOUR-SITE.vercel.app npm run sync   # pulls the live site into www/
+PLATE_SITE_URL=https://plateglp1.com npm run sync   # pulls the live site into www/
 npx cap add ios
 npx cap open ios          # opens Xcode
 ```
