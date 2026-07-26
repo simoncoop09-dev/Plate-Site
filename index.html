@@ -1187,6 +1187,111 @@ body.seeing-site .dash{display:none}
   .hl svg path{stroke-dashoffset:0}
   .ring{--deg:252deg}
 }
+
+/* ================= CLAY & INK RESKIN ================= */
+:root{
+  --bg-primary:#F7F1E6;
+  --bg-surface:#EFE7D7;
+  --text-primary:#1D1A14;
+  --text-secondary:#5A523F;
+  --text-tertiary:#8C8270;
+  --border:#E0D5BF;
+  --accent:#C24A26;
+  --accent-dark:#9E3A1C;
+  --olive:#6B7040;
+  --ink:#1D1A14;
+  --paper:#FFFDF6;
+}
+body{background:var(--bg-primary)}
+
+/* type accents go mono-caps */
+.overline,.pill,.dash-date,.dash-card h3,.dash-block h3,.dm-slot,.to-mode,.ai-tag,.aisle-name small,.dash-checkin-done b{
+  font-family:ui-monospace,'SF Mono',Menlo,monospace !important;letter-spacing:0.12em !important;
+}
+
+/* buttons: ink blocks, not green pills */
+.btn{border-radius:12px !important}
+.btn-primary{background:var(--ink) !important;color:var(--paper) !important;box-shadow:3px 3px 0 rgba(29,26,20,0.18) !important}
+.btn-primary:hover{background:var(--accent) !important;transform:translate(-1px,-1px);box-shadow:5px 5px 0 rgba(29,26,20,0.18) !important}
+.btn-secondary{background:transparent !important;color:var(--ink) !important;border:1.5px solid var(--ink) !important;box-shadow:none !important}
+.btn-secondary:hover{background:var(--ink) !important;color:var(--paper) !important}
+
+/* cards: paper + ink hairline + print offset shadow (kills the glass) */
+.card,.dash-card,.aisle,.g-topcard{
+  background:var(--paper) !important;
+  backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
+  border:1.5px solid rgba(29,26,20,0.16) !important;
+  border-radius:16px !important;
+  box-shadow:4px 4px 0 rgba(29,26,20,0.07) !important;
+}
+.card:hover,.dash-card:hover{transform:translate(-1px,-1px) !important;box-shadow:6px 6px 0 rgba(29,26,20,0.1) !important;border-color:rgba(29,26,20,0.3) !important}
+
+/* hero + dashboard atmosphere: paper, grain, one flat terracotta sun */
+.hero{background:var(--bg-primary) !important}
+.sun{background:radial-gradient(circle, rgba(194,74,38,0.9) 0%, rgba(194,74,38,0.9) 52%, transparent 53%) !important;filter:none !important;opacity:0.14}
+.haze{display:none}
+.hero-golden{background:
+  radial-gradient(120% 60% at 50% 112%, rgba(194,74,38,0.25), transparent 60%),
+  linear-gradient(180deg, #F9F3E6 0%, #F3E7CF 100%) !important}
+.hero-golden::after{background:radial-gradient(circle, rgba(194,74,38,0.45) 0%, rgba(194,74,38,0.18) 45%, transparent 68%) !important}
+.po-rim{stroke-opacity:0.09}.po-well{stroke-opacity:0.07}
+.dash{background:var(--bg-primary) !important}
+.dash::before{
+  content:"";position:absolute;top:-140px;right:-120px;width:380px;height:380px;border-radius:50%;
+  background:var(--accent);opacity:0.1;pointer-events:none;
+}
+.dash-cycle b,.hl{color:var(--accent) !important}
+.hl svg path{stroke:var(--accent) !important}
+
+/* dashboard pieces */
+.dash-mood{background:var(--paper) !important;border:1.5px solid rgba(29,26,20,0.16) !important;border-radius:14px !important;box-shadow:3px 3px 0 rgba(29,26,20,0.06) !important}
+.dash-mood.picked{border-color:var(--accent) !important;background:rgba(194,74,38,0.08) !important}
+.dash-libby{background:var(--accent) !important;border:1.5px solid rgba(29,26,20,0.25) !important;color:#FFF8EE !important}
+.dash-libby:hover{background:var(--accent-dark) !important}
+.dash-libby .dl-dot{background:rgba(255,248,238,0.2) !important;border-color:rgba(255,248,238,0.55) !important}
+.dm-check,.g-box{border-radius:8px !important;border-color:rgba(29,26,20,0.3) !important}
+.dash-meal.eaten .dm-check,.g-item.done .g-box{background:var(--olive) !important;border-color:var(--olive) !important}
+.dash-protein-fill,.g-progress i{background:var(--accent) !important}
+.dash-streak-line b{color:var(--accent) !important}
+.dash-link:hover,.g-textbtn:hover,.hero-quiet:hover,.room-open,.to-order,.meal-ask{color:var(--accent) !important}
+
+/* grocery aisle tiles: clay family instead of pastel rainbow */
+.gi-produce{background:rgba(107,112,64,0.15) !important}.gi-produce svg{stroke:#5C6136 !important}
+.gi-meat{background:rgba(194,74,38,0.13) !important}.gi-meat svg{stroke:var(--accent-dark) !important}
+.gi-dairy{background:rgba(233,161,59,0.16) !important}.gi-dairy svg{stroke:#A56A14 !important}
+.gi-bakery{background:rgba(146,104,58,0.16) !important}.gi-bakery svg{stroke:#7A5426 !important}
+.gi-frozen{background:rgba(90,102,126,0.14) !important}.gi-frozen svg{stroke:#4B586F !important}
+.gi-pantry{background:rgba(29,26,20,0.07) !important}.gi-pantry svg{stroke:var(--text-secondary) !important}
+.gi-other{background:rgba(29,26,20,0.06) !important}
+.aisle.done-aisle .g-ic{background:rgba(107,112,64,0.18) !important}
+.aisle.done-aisle .g-ic svg{stroke:var(--olive) !important}
+.g-item.done{background:rgba(107,112,64,0.07) !important}
+
+/* rooms: muted editorial faces */
+.rf-mara{background:#6B7040 !important}
+.rf-ollie{background:#C24A26 !important}
+.rf-jules{background:#1D1A14 !important}
+.rf-rio{background:#A56A14 !important}
+.room-face{border-radius:14px !important;font-family:ui-monospace,monospace !important}
+
+/* dark sections + CTA: ink and terracotta, no green */
+.cycle-section{background:var(--ink) !important}
+.cta{background:var(--accent) !important}
+.tabbar{background:rgba(247,241,230,0.94) !important;border-top:1.5px solid rgba(29,26,20,0.14) !important}
+.tab.active{color:var(--accent) !important}
+
+/* chat + panels */
+.chat-panel,.plan-overlay{background:var(--bg-primary) !important}
+.chat-head,.plan-head{background:rgba(247,241,230,0.95) !important}
+.chat-fab{background:var(--ink) !important}
+.chat-fab:hover{background:var(--accent) !important}
+.msg.bot{background:var(--paper);border:1.5px solid rgba(29,26,20,0.12)}
+.msg.user{background:var(--ink);color:var(--paper)}
+.plan-tab.active{color:var(--accent) !important;border-bottom-color:var(--accent) !important}
+.to-mode.gentle{background:rgba(90,102,126,0.14) !important;color:#4B586F !important}
+.to-mode.steady{background:rgba(233,161,59,0.18) !important;color:#A56A14 !important}
+.to-mode.strong{background:rgba(107,112,64,0.16) !important;color:#5C6136 !important}
+
 </style>
 <script type="application/ld+json">
 {
