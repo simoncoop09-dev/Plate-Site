@@ -2433,8 +2433,10 @@ var AMAZON_ASIN_MAP = {
 // Once the Walmart affiliate (Impact Radius) account is approved, their catalog
 // API can auto-fill this map and the links can carry the commission wrapper.
 var WALMART_ITEM_MAP = {
-  // 'chicken breast': '27935840',
-  // 'greek yogurt':   '10450115'
+  // Verified against live walmart.com product pages (Jul 2026):
+  'chicken breast': '10414680',  // Great Value Boneless Skinless Chicken Breasts, 3 lb
+  'greek yogurt':   '26559565'   // Great Value Plain Nonfat Greek Yogurt, 32 oz - 17g protein/serving
+  // Add more staples: walmart.com/ip/product-name/ITEMID - the trailing number is the ID.
 };
 
 function walmartCartUrl(ids){
