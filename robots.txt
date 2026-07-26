@@ -8,3 +8,5 @@ User-agent: ClaudeBot
 Allow: /
 User-agent: PerplexityBot
 Allow: /
+
+Sitemap: https://plateglp1.com/sitemap.xml
