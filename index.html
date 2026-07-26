@@ -210,6 +210,26 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
 @keyframes plateSpin{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion: reduce){.po-1,.po-2,.po-3{animation:none}}
 @media(max-width:700px){.po-2,.po-3{display:none}.po-1{top:-6%;right:-22%}}
+.hero-golden{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(130% 62% at 50% 112%, rgba(255,138,72,0.62), rgba(255,138,72,0) 62%),
+    radial-gradient(88% 48% at 50% 116%, rgba(255,186,110,0.75), rgba(255,186,110,0) 58%),
+    radial-gradient(60% 40% at 50% 96%, rgba(255,210,140,0.5), transparent 70%),
+    linear-gradient(180deg, #FFF6E6 0%, #FCEBC8 48%, #F8D9A4 100%);
+  -webkit-mask-image:radial-gradient(circle at -999px -999px, #000 0, transparent 0);
+  mask-image:radial-gradient(circle at -999px -999px, #000 0, transparent 0);
+}
+.hero-golden::after{
+  content:"";position:absolute;left:50%;bottom:-14%;transform:translateX(-50%);
+  width:min(700px,130vw);height:min(700px,130vw);border-radius:50%;
+  background:radial-gradient(circle, rgba(255,178,100,0.75) 0%, rgba(255,160,90,0.3) 45%, transparent 68%);
+  filter:blur(26px);
+}
+@media(min-width:960px){.hero-golden::after{left:74%}}
+.hero-bg{animation:bgSettle 1800ms cubic-bezier(0.16,1,0.3,1) both}
+@keyframes bgSettle{from{transform:scale(1.06)}to{transform:scale(1)}}
+@media(prefers-reduced-motion: reduce){.hero-bg{animation:none}.hero-golden{display:none}}
 .grain{
   position:absolute;inset:0;opacity:0.05;mix-blend-mode:multiply;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
@@ -1308,6 +1328,7 @@ body.seeing-site .dash{display:none}
     <div class="plate-orn po-1" aria-hidden="true"><svg viewBox="0 0 100 100"><circle class="po-rim" cx="50" cy="50" r="48"/><circle class="po-well" cx="50" cy="50" r="31"/></svg></div>
     <div class="plate-orn po-2" aria-hidden="true"><svg viewBox="0 0 100 100"><circle class="po-rim" cx="50" cy="50" r="48"/><circle class="po-well" cx="50" cy="50" r="30"/></svg></div>
     <div class="plate-orn po-3" aria-hidden="true"><svg viewBox="0 0 100 100"><circle class="po-rim" cx="50" cy="50" r="48"/><circle class="po-well" cx="50" cy="50" r="32"/></svg></div>
+    <div class="hero-golden" aria-hidden="true"></div>
     <div class="grain"></div>
   </div>
   <div class="hero-inner">
@@ -1835,6 +1856,46 @@ body.seeing-site .dash{display:none}
 
 <script>
 var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Golden-hour spotlight: a soft circle of richer light follows the cursor
+// (or drifts on its own on touch screens), revealing the sunset layer.
+(function(){
+  var hero = document.querySelector('.hero');
+  var golden = document.querySelector('.hero-golden');
+  if (!hero || !golden || reducedMotion) return;
+  var SPOT = 260;
+  var finePointer = window.matchMedia && window.matchMedia('(pointer: fine)').matches;
+  var tx = -999, ty = -999, gx = -999, gy = -999, drift = Math.random() * 10;
+  if (finePointer) {
+    hero.addEventListener('mousemove', function(e){
+      var r = hero.getBoundingClientRect();
+      tx = e.clientX - r.left;
+      ty = e.clientY - r.top;
+    });
+    hero.addEventListener('mouseleave', function(){ tx = -999; ty = -999; });
+  }
+  function paint(){
+    if (!document.body.classList.contains('has-dash')) {
+      if (!finePointer) {
+        drift += 0.004;
+        tx = hero.clientWidth * (0.5 + 0.34 * Math.sin(drift * 1.3));
+        ty = hero.clientHeight * (0.42 + 0.26 * Math.cos(drift * 0.9));
+      }
+      gx += (tx - gx) * 0.1;
+      gy += (ty - gy) * 0.1;
+      var m = 'radial-gradient(circle at ' + gx.toFixed(1) + 'px ' + gy.toFixed(1) + 'px, ' +
+        'rgba(0,0,0,1) 0px, rgba(0,0,0,1) ' + Math.round(SPOT * 0.4) + 'px, ' +
+        'rgba(0,0,0,0.75) ' + Math.round(SPOT * 0.6) + 'px, ' +
+        'rgba(0,0,0,0.4) ' + Math.round(SPOT * 0.75) + 'px, ' +
+        'rgba(0,0,0,0.12) ' + Math.round(SPOT * 0.88) + 'px, ' +
+        'rgba(0,0,0,0) ' + SPOT + 'px)';
+      golden.style.webkitMaskImage = m;
+      golden.style.maskImage = m;
+    }
+    requestAnimationFrame(paint);
+  }
+  requestAnimationFrame(paint);
+})();
 
 // Hero phone: scroll scrubs the shot (straightens + lifts as you scroll)
 var heroPhone = document.querySelector('.hero .phone');
