@@ -848,7 +848,7 @@ body.seeing-site .dash{display:none}
   width:38px;height:38px;border-radius:50%;background:var(--bg-surface);border:1px solid var(--border);
   cursor:pointer;font-size:20px;line-height:1;color:var(--text-secondary);flex-shrink:0;
 }
-.plan-tabs{display:flex;gap:6px;padding:12px 20px 0;flex-shrink:0}
+.plan-tabs{display:none}
 .plan-tab{
   flex:1;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;
   background:none;border:none;border-bottom:2.5px solid transparent;
@@ -2621,6 +2621,12 @@ document.getElementById('planClose').addEventListener('click', closePlan);
 document.getElementById('planRebuild').addEventListener('click', openPlanBuilder);
 
 function showTab(which){
+  var t = document.querySelector('#planOverlay .plan-head-title strong');
+  var s = document.querySelector('#planOverlay .plan-head-title span');
+  if (t && s) {
+    if (which === 'grocery') { t.textContent = 'Grocery list'; s.textContent = 'Everything for your week, sorted by aisle'; }
+    else { t.textContent = 'Your week'; s.textContent = currentPlan && currentPlan.summary ? currentPlan.summary : 'Seven days, planned around your cycle'; }
+  }
   var isPlan = which === 'plan';
   tabPlan.classList.toggle('active', isPlan);
   tabGrocery.classList.toggle('active', !isPlan);
