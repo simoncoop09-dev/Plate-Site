@@ -750,7 +750,7 @@ body.seeing-site .dash{display:none}
 
 /* ---------- bottom tab bar (mobile / app) ---------- */
 .tabbar{
-  display:none;position:fixed;left:0;right:0;bottom:0;z-index:305;
+  display:none;position:fixed;left:0;right:0;bottom:0;z-index:460;
   background:rgba(250,249,244,0.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
   border-top:1px solid var(--border);
   padding:8px 6px calc(8px + env(safe-area-inset-bottom));
@@ -767,6 +767,10 @@ body.seeing-site .dash{display:none}
 .tab:active{transform:scale(0.94)}
 @media(max-width:768px){
   .tabbar{display:block}
+  .plan-overlay .plan-close{display:none}
+  .chat-close{display:none}
+  .plan-overlay .plan-body{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+  .chat-panel{z-index:455}
   body{padding-bottom:calc(66px + env(safe-area-inset-bottom))}
   .chat-fab{display:none}
   .chat-panel{bottom:calc(72px + env(safe-area-inset-bottom));height:min(560px, calc(100vh - 150px))}
