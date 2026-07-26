@@ -35,10 +35,10 @@
   --accent-dark:#4A762A;
   --accent-warm:#FF8A65;
   --success:#4CAF50;
-  --border:#E8E8E3;
+  --border:#E5E2D3;
   --border-light:#F0F0EB;
-  --shadow-card:0 2px 8px rgba(0,0,0,0.04);
-  --shadow-card-hover:0 12px 32px rgba(26,26,26,0.09);
+  --shadow-card:none;
+  --shadow-card-hover:0 10px 30px rgba(32,41,26,0.07);
   --shadow-button:0 4px 12px rgba(124,179,66,0.25);
   --shadow-button-hover:0 8px 20px rgba(124,179,66,0.4);
   --ease:cubic-bezier(0.4,0,0.2,1);
@@ -59,7 +59,7 @@ body{
 @media(min-width:640px){.container{padding:0 48px}}
 @media(min-width:1024px){.container{padding:0 64px}}
 
-h1{font-family:'Fraunces',Georgia,serif;font-size:clamp(46px,7vw,78px);font-weight:600;line-height:1.03;letter-spacing:-0.015em}
+h1{font-family:'Fraunces',Georgia,serif;font-size:clamp(48px,6.4vw,92px);font-weight:600;line-height:1.01;letter-spacing:-0.02em}
 h2{font-family:'Fraunces',Georgia,serif;font-size:clamp(32px,4.5vw,48px);font-weight:600;line-height:1.12;letter-spacing:-0.012em}
 h3{font-size:24px;font-weight:600;line-height:1.3}
 .body-large{font-size:18px;font-weight:400;line-height:1.65}
@@ -68,7 +68,9 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
 .stat-number{font-size:44px;font-weight:800;letter-spacing:-0.02em;color:var(--accent)}
 
 /* ---------- pill eyebrow ---------- */
-.pill{
+.pill{background:none !important;border:none !important;padding:0 !important;font-size:12px !important;font-weight:700 !important;letter-spacing:0.16em !important;text-transform:uppercase !important;color:var(--text-tertiary) !important;box-shadow:none !important}
+.pill-dot{display:none !important}
+.pill-legacy{
   display:inline-flex;align-items:center;gap:8px;
   font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;
   color:var(--accent-dark);background:rgba(124,179,66,0.1);
@@ -172,7 +174,7 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
 .hero{
   position:relative;min-height:100vh;min-height:100svh;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:150px 24px 90px;
+  text-align:left;padding:130px 24px 70px;
   overflow:hidden;
   background:
     radial-gradient(130% 60% at 50% 112%, rgba(255,166,110,0.42), rgba(255,166,110,0) 62%),
@@ -180,6 +182,7 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
     linear-gradient(180deg, #FAF9F4 0%, #F1F3E4 52%, #F7EFDB 100%);
 }
 .hero-bg{position:absolute;inset:0;pointer-events:none;z-index:0}
+@media(min-width:960px){.hero .sun{left:74% !important;bottom:-24% !important}}
 .sun{
   position:absolute;left:50%;bottom:-16%;transform:translateX(-50%);
   width:min(640px,120vw);height:min(640px,120vw);border-radius:50%;
@@ -200,7 +203,13 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
   position:absolute;inset:0;opacity:0.05;mix-blend-mode:multiply;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
 }
-.hero-inner{position:relative;display:flex;flex-direction:column;align-items:center;max-width:920px}
+.hero-inner{position:relative;display:grid;grid-template-columns:1fr;gap:44px;align-items:center;max-width:1140px;width:100%;text-align:left}
+@media(min-width:960px){.hero-inner{grid-template-columns:1.05fr 0.95fr;gap:56px}}
+.hero-copy{max-width:600px}
+.overline{display:block;font-size:12px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:22px}
+.hero-quiet{font-family:inherit;background:none;border:none;cursor:pointer;font-size:15px;font-weight:600;color:var(--text-secondary);padding:0}
+.hero-quiet:hover{color:var(--accent-dark)}
+.hero-fine{margin-top:26px;font-size:13px;color:var(--text-tertiary)}
 .hi{opacity:0;transform:translateY(34px) scale(0.985);filter:blur(10px);animation:riseIn 1050ms cubic-bezier(0.22,1,0.36,1) forwards}
 .hi-1{animation-delay:150ms}
 .hi-2{animation-delay:300ms}
@@ -221,8 +230,8 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
   animation:draw 900ms var(--ease) 1000ms forwards;
 }
 @keyframes draw{to{stroke-dashoffset:0}}
-.hero-sub{max-width:580px;color:var(--text-secondary);margin-bottom:38px}
-.hero-buttons{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:38px}
+.hero-sub{text-align:left;margin:24px 0 34px;max-width:480px;font-size:clamp(16px,2vw,19px);color:var(--text-secondary);line-height:1.65}
+.hero-buttons{display:flex;gap:16px;flex-wrap:wrap;justify-content:flex-start;margin-bottom:38px}
 .social-proof{display:flex;align-items:center;gap:14px;margin-bottom:70px;flex-wrap:wrap;justify-content:center}
 .avatars{display:flex}
 .avatar{
@@ -354,7 +363,7 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
 /* steps */
 .steps{display:flex;flex-direction:column;gap:0}
 @media(min-width:1024px){.steps{flex-direction:row;align-items:flex-start}}
-.step{flex:1;text-align:center;padding:0 16px}
+.step{flex:1;text-align:left;padding:26px 20px;border-top:1px solid var(--border)}
 .step-num{
   width:60px;height:60px;margin:0 auto 16px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
@@ -363,8 +372,8 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
   transition:all 350ms var(--ease-spring);
 }
 .step:hover .step-num{background:var(--accent);color:#fff;transform:scale(1.1);box-shadow:var(--shadow-button)}
-.step h3{font-size:19px;margin-bottom:10px}
-.step .caption{max-width:240px;margin:0 auto}
+.step h3{font-family:'Fraunces',Georgia,serif;font-size:21px;font-weight:600;margin-bottom:8px}
+.step .caption{max-width:300px;margin:0}
 .step-line{position:relative;flex-shrink:0;align-self:center;width:2px;height:44px;background:var(--border);margin:10px auto}
 @media(min-width:1024px){.step-line{width:70px;height:2px;margin:29px 0 0}}
 .step-line::after{
@@ -560,6 +569,14 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
   padding:9px 15px;cursor:pointer;transition:all 200ms ease;
 }
 .chip:hover{background:var(--accent);border-color:var(--accent);color:#fff;transform:translateY(-1px)}
+
+/* ---------- editorial rows ---------- */
+.edit-rows{max-width:760px;margin:0 auto}
+.edit-row{display:flex;gap:28px;padding:34px 0;border-top:1px solid var(--border)}
+.edit-row:last-child{border-bottom:1px solid var(--border)}
+.edit-num{font-family:'Fraunces',Georgia,serif;font-size:15px;font-weight:600;color:var(--accent-dark);padding-top:5px;flex-shrink:0}
+.edit-body h3{font-family:'Fraunces',Georgia,serif;font-size:clamp(21px,2.6vw,26px);font-weight:600;letter-spacing:-0.01em;margin-bottom:8px}
+.edit-body p{font-size:15.5px;color:var(--text-secondary);line-height:1.7;max-width:560px}
 
 /* ---------- dashboard (returning users) ---------- */
 .dash{
@@ -1114,17 +1131,15 @@ body.has-dash .hero{display:none}
     <div class="grain"></div>
   </div>
   <div class="hero-inner">
-    <span class="pill hi hi-1"><span class="pill-dot"></span>GLP-1 Nutrition</span>
-    <h1 class="hi hi-2">The only meal planner built for <span class="hl">GLP&#8209;1s<svg viewBox="0 0 300 24" preserveAspectRatio="none"><path d="M4 18 Q 75 6, 150 13 T 296 10"/></svg></span></h1>
-    <p class="body-large hero-sub hi hi-3">Personalized high-protein meal plans, smart grocery lists, and a nutritionist that understands your medication — all in one place.</p>
-    <div class="hero-buttons hi hi-4">
-      <button class="btn btn-primary js-plan" type="button">Build my free meal plan <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></button>
-      <a href="#how-it-works" class="btn btn-secondary">See How It Works</a>
-    </div>
-    <div class="social-proof hi hi-5">
-      <span class="trust-chip"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Free while in early access</span>
-      <span class="trust-chip"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>No credit card</span>
-      <span class="trust-chip"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Built around your injection cycle</span>
+    <div class="hero-copy">
+      <span class="overline hi hi-1">Ozempic &middot; Wegovy &middot; Mounjaro &middot; Zepbound</span>
+      <h1 class="hi hi-2">The only meal planner built for <span class="hl">GLP&#8209;1s<svg viewBox="0 0 300 24" preserveAspectRatio="none"><path d="M4 18 Q 75 6, 150 13 T 296 10"/></svg></span></h1>
+      <p class="hero-sub hi hi-3">Plans that follow your injection cycle. A grocery list that writes itself. A nutritionist who gets it.</p>
+      <div class="hero-buttons hi hi-4">
+        <button class="btn btn-primary js-plan" type="button">Build my free meal plan <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></button>
+        <button class="hero-quiet js-open-chat" type="button">or ask Libby anything &rarr;</button>
+      </div>
+      <div class="hero-fine hi hi-5">Free in early access &middot; no account needed</div>
     </div>
     <div class="phone-wrap hi hi-6">
       <div class="phone-glow"></div>
@@ -1168,31 +1183,6 @@ body.has-dash .hero{display:none}
   </div>
 </header>
 
-<!-- 2. TRUST MARQUEE -->
-<div class="trust">
-  <div class="trust-label">Built for people taking</div>
-  <div class="marquee" aria-hidden="false">
-    <div class="marquee-set">
-      <span class="trust-logo">Ozempic</span>
-      <span class="trust-logo">Wegovy</span>
-      <span class="trust-logo">Mounjaro</span>
-      <span class="trust-logo">Zepbound</span>
-      <span class="trust-logo">Saxenda</span>
-      <span class="trust-logo">Semaglutide</span>
-      <span class="trust-logo">Tirzepatide</span>
-    </div>
-    <div class="marquee-set" aria-hidden="true">
-      <span class="trust-logo">Ozempic</span>
-      <span class="trust-logo">Wegovy</span>
-      <span class="trust-logo">Mounjaro</span>
-      <span class="trust-logo">Zepbound</span>
-      <span class="trust-logo">Saxenda</span>
-      <span class="trust-logo">Semaglutide</span>
-      <span class="trust-logo">Tirzepatide</span>
-    </div>
-  </div>
-</div>
-
 <!-- 3. FEATURES -->
 <section class="section" id="features">
   <div class="container">
@@ -1201,27 +1191,18 @@ body.has-dash .hero{display:none}
       <h2>Built for the side effects no one talks about</h2>
       <p class="body-large">Nausea. Muscle loss. Zero appetite. Your medication changes everything — including what you should eat.</p>
     </div>
-    <div class="features-grid stagger">
-      <div class="card feature-card">
-        <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
-        </div>
-        <h3>Dose-Specific Meal Plans</h3>
-        <p>Your plan adapts to your medication and dose. High-nausea days get bland, protein-rich options. Maintenance days get more variety.</p>
+    <div class="edit-rows stagger">
+      <div class="edit-row">
+        <span class="edit-num">01</span>
+        <div class="edit-body"><h3>Plans that follow your shot</h3><p>Gentle, cold, protein-first meals for the rough days after your injection. Fuller plates when your appetite comes back. Same week, planned like it actually feels.</p></div>
       </div>
-      <div class="card feature-card">
-        <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
-        </div>
-        <h3>Protein That Fits Your Appetite</h3>
-        <p>Track your daily protein against a goal built for your body weight. Quick-add foods, visual progress, and gentle reminders when you're behind.</p>
+      <div class="edit-row">
+        <span class="edit-num">02</span>
+        <div class="edit-body"><h3>Protein without the fight</h3><p>A goal set to your body, hit in small portions your stomach can handle &mdash; because the weight you lose should be fat, not muscle.</p></div>
       </div>
-      <div class="card feature-card">
-        <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6l1 1 2-2"/><path d="M3 12l1 1 2-2"/><path d="M3 18l1 1 2-2"/></svg>
-        </div>
-        <h3>Auto-Generated Grocery Lists</h3>
-        <p>One tap turns your weekly meal plan into an organized grocery list. Sorted by aisle. Export to your phone. Never forget an ingredient again.</p>
+      <div class="edit-row">
+        <span class="edit-num">03</span>
+        <div class="edit-body"><h3>A grocery list that writes itself</h3><p>Your whole week&rsquo;s ingredients, deduplicated, sorted by aisle, one tap from your plan to the store.</p></div>
       </div>
     </div>
   </div>
@@ -1348,66 +1329,6 @@ body.has-dash .hero{display:none}
   </div>
 </section>
 
-<!-- 5. APP PREVIEW -->
-<section class="section">
-  <div class="container">
-    <div class="preview-grid">
-      <div class="preview-left reveal">
-        <span class="pill"><span class="pill-dot"></span>Inside the App</span>
-        <h2>Everything you need, nothing you don't</h2>
-        <p class="body-large">No calorie counting. No judgment. Just a clear plan, a smart grocery list, and a nutritionist in your pocket who actually understands GLP-1s.</p>
-        <ul class="check-list">
-          <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Weekly meal plans that adjust to your dose</li>
-          <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Protein tracking with visual daily goals</li>
-          <li><span class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Side-effect logging with smart tips</li>
-        </ul>
-        <button class="btn btn-primary js-plan" type="button">Build my free meal plan <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></button>
-      </div>
-      <div class="preview-right reveal">
-        <div class="phone-wrap float">
-          <div class="phone-glow"></div>
-          <div class="phone">
-            <div class="phone-screen">
-              <div class="phone-status">
-                <span>9:41</span>
-                <span class="bars"><i style="height:4px"></i><i style="height:6px"></i><i style="height:8px"></i><i style="height:10px"></i></span>
-              </div>
-              <span class="phone-date">Monday, July 21</span>
-              <span class="phone-title">Today's Meals</span>
-              <div class="mini-card">
-                <div class="mini-card-left">
-                  <span class="mini-emoji">🥣</span>
-                  <span class="mini-meal-text"><span class="mini-meal-label">Breakfast</span><span class="mini-meal-name">Greek Yogurt Bowl</span></span>
-                </div>
-                <span class="mini-protein">24g</span>
-              </div>
-              <div class="mini-card">
-                <div class="mini-card-left">
-                  <span class="mini-emoji">🥗</span>
-                  <span class="mini-meal-text"><span class="mini-meal-label">Lunch</span><span class="mini-meal-name">Grilled Chicken Salad</span></span>
-                </div>
-                <span class="mini-protein">38g</span>
-              </div>
-              <div class="mini-card">
-                <div class="mini-card-left">
-                  <span class="mini-emoji">🐟</span>
-                  <span class="mini-meal-text"><span class="mini-meal-label">Dinner</span><span class="mini-meal-name">Salmon &amp; Quinoa</span></span>
-                </div>
-                <span class="mini-protein">32g</span>
-              </div>
-              <div class="ring-wrap">
-                <div class="ring js-ring"><div class="ring-inner"><strong class="js-ring-num">0g</strong><span>of 120g</span></div></div>
-                <span class="ring-label"><strong>Protein today</strong><br>36g to go before dinner.</span>
-              </div>
-              <div class="phone-btn js-grocery" role="button" tabindex="0">Grocery List</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- 6. PRICING -->
 <section class="section bg-white" id="pricing">
   <div class="container">
@@ -1450,32 +1371,7 @@ body.has-dash .hero{display:none}
 <!-- 7. WHAT PLATE SOLVES -->
 <!-- NOTE: when you have real users, real testimonials belong here.
      Never publish invented quotes or results — it's illegal advertising. -->
-<section class="section">
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="pill"><span class="pill-dot"></span>Why we built it</span>
-      <h2>The problems no one prepares you for</h2>
-      <p class="body-large">Every GLP-1 forum has the same three posts on repeat. Plate is built around them.</p>
-    </div>
-    <div class="testi-grid stagger">
-      <div class="card testi-card">
-        <div class="solve-num">01</div>
-        <h3 class="solve-title">"Nothing sounds edible"</h3>
-        <p class="solve-body">Food aversion and nausea make normal meals impossible, so people end up living on crackers. Plate leans into cold, bland, protein-dense options on the days you need them — and saves the real food for the days you can enjoy it.</p>
-      </div>
-      <div class="card testi-card">
-        <div class="solve-num">02</div>
-        <h3 class="solve-title">"I'm losing muscle, not just fat"</h3>
-        <p class="solve-body">A tiny appetite makes protein targets genuinely hard to hit. Plate sets a goal based on your body, shows it as one simple ring, and helps you front-load protein on the days your appetite comes back.</p>
-      </div>
-      <div class="card testi-card">
-        <div class="solve-num">03</div>
-        <h3 class="solve-title">"I can't think about food anymore"</h3>
-        <p class="solve-body">Decision fatigue is real when eating stops being fun. Plate decides for you — a plan that already accounts for your medication, your shot day, and how you actually feel this morning.</p>
-      </div>
-    </div>
-  </div>
-</section>
+
 
 <!-- 8. FAQ -->
 <section class="section bg-white" id="faq">
