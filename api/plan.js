@@ -48,6 +48,8 @@ OUTPUT RULES:
 - 3 or 4 ingredients per meal, never more. "qty" stays short ("6 oz", "1 cup").
 - "note" is 10 words maximum. Keep every string tight — this must generate fast.
 - Never mention medication dosing, medical treatment, or expected weight loss anywhere in the output.
+- DISLIKES ARE ABSOLUTE: if the user lists dislikes or foods to avoid, they must appear NOWHERE - not in any meal, ingredient, or the shopping list. Choose alternatives instead.
+- SHOPPING LIST: after planning all 7 days, produce a top-level "shopping" array - the REAL store list. One entry per unique ingredient across the whole week. "buy" is what a person actually grabs off a shelf to cover the entire week: think packages, not recipe units - "2 lb pack", "32 oz tub", "1 dozen", "2 cans", "1 bag", "5 bananas", "1 loaf". Round UP to real package sizes. Mark "staple": true for pantry items people usually already own (oils, spices, condiments, sauces, honey, broth) - those get checked at home, not bought weekly.
 
 Schema:
 {
@@ -72,6 +74,9 @@ Schema:
         }
       ]
     }
+  ],
+  "shopping": [
+    {"item": "<generic name matching the ingredients>", "buy": "<store package for the week>", "aisle": "<from list>", "staple": <true|false>}
   ]
 }
 
@@ -125,7 +130,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 7000,
+        max_tokens: 7800,
         stream: true,
         system: PLAN_SYSTEM,
         messages: [
