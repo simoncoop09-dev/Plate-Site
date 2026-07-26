@@ -56,4 +56,4 @@ explicitly declines these and directs users to their physician (test it:
 ask "should I change my dose?"). Native functionality: on-device local
 notifications aligned to the user's self-reported injection cycle (set a
 shot day in the chat assistant to trigger scheduling). No account required.
-No purchases in the app. Medical disclaimer: [YOUR-URL]/disclaimer.html.
+No purchases in the app. Medical disclaimer: https://plateglp1.com/disclaimer.html.
