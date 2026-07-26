@@ -8,7 +8,7 @@
 # 3. In Codemagic → Teams → Integrations → App Store Connect: add that key.
 #    Name the integration: plate_asc
 # 4. In Codemagic app settings → Environment variables, add:
-#      PLATE_SITE_URL = https://YOUR-SITE.vercel.app   (group: plate)
+#      PLATE_SITE_URL = https://plateglp1.com   (group: plate)
 # 5. In App Store Connect → Apps → "+" → New App:
 #      Name: Plate — GLP-1 Meal Planner, Bundle ID: com.plate.nutrition,
 #      SKU: plate1, Language: English (U.S.)
