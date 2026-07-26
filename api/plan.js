@@ -43,6 +43,7 @@ OUTPUT RULES:
 - Respond with ONE valid JSON object and NOTHING else. No markdown fences, no commentary.
 - Every ingredient needs an "aisle" from exactly this list: Produce, Meat & Seafood, Dairy & Eggs, Pantry, Frozen, Bakery, Other.
 - Keep ingredient names generic and shoppable ("chicken breast", not "1 organic free-range chicken breast from the good butcher").
+- GROCERY VOCABULARY: build meals primarily from widely-stocked staples, using exactly these generic names when used: chicken breast, ground turkey, salmon, canned tuna, shrimp, eggs, egg whites, greek yogurt, cottage cheese, string cheese, cheddar cheese, milk, firm tofu, black beans, chickpeas, lentils, rotisserie chicken, deli turkey, protein powder, oats, brown rice, quinoa, whole wheat bread, corn tortillas, potatoes, sweet potatoes, pasta, baby spinach, broccoli, bell pepper, cucumber, carrots, zucchini, green beans, lettuce, tomatoes, onion, garlic, avocado, banana, apple, blueberries, strawberries, lemon, olive oil, peanut butter, almonds, chicken broth, salsa, soy sauce, honey. Specialty items are allowed when a recipe truly needs one, but most of the list should come from these staples - it makes the grocery list orderable in one tap.
 - "how" is ONE short sentence of preparation, 12 words maximum.
 - 3 or 4 ingredients per meal, never more. "qty" stays short ("6 oz", "1 cup").
 - "note" is 10 words maximum. Keep every string tight — this must generate fast.
