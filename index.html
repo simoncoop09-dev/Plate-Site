@@ -589,62 +589,73 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
 .edit-body h3{font-family:'Fraunces',Georgia,serif;font-size:clamp(21px,2.6vw,26px);font-weight:600;letter-spacing:-0.01em;margin-bottom:8px}
 .edit-body p{font-size:15.5px;color:var(--text-secondary);line-height:1.7;max-width:560px}
 
-/* ---------- dashboard (returning users) ---------- */
+/* ---------- dashboard: morning paper ---------- */
 .dash{
   display:none;
   min-height:100svh;
-  padding:calc(96px + env(safe-area-inset-top)) 20px 40px;
+  padding:calc(104px + env(safe-area-inset-top)) 24px 56px;
+  position:relative;overflow:hidden;
   background:
-    radial-gradient(120% 50% at 50% 115%, rgba(255,166,110,0.30), rgba(255,166,110,0) 60%),
-    linear-gradient(180deg, #FAF9F4 0%, #F2F4E6 100%);
+    radial-gradient(120% 45% at 50% 112%, rgba(255,166,110,0.35), rgba(255,166,110,0) 60%),
+    linear-gradient(180deg, #FAF9F4 0%, #F3F4E7 60%, #F6F0DE 100%);
+}
+.dash::after{
+  content:"";position:absolute;inset:0;opacity:0.045;mix-blend-mode:multiply;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
 }
 body.has-dash .dash{display:block}
 body.has-dash .hero{display:none}
-.dash-inner{max-width:640px;margin:0 auto}
-.dash-date{font-size:12px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:6px}
-.dash-greet{font-family:'Fraunces',Georgia,serif;font-size:clamp(30px,6vw,40px);font-weight:600;letter-spacing:-0.01em;line-height:1.1;margin-bottom:6px}
-.dash-cycle{font-size:14.5px;color:var(--text-secondary);margin-bottom:22px}
-.dash-cycle b{color:var(--accent-dark)}
-.dash-card{background:#fff;border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:14px;box-shadow:var(--shadow-card)}
-.dash-card h3{font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:14px}
-.dash-checkin-row{display:flex;gap:10px}
+.dash-inner{max-width:620px;margin:0 auto;position:relative;z-index:1}
+.dash-date{font-size:11.5px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:10px}
+.dash-greet{font-family:'Fraunces',Georgia,serif;font-size:clamp(40px,8vw,58px);font-weight:600;letter-spacing:-0.015em;line-height:1.02;margin-bottom:10px}
+.dash-cycle{font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:17px;color:var(--text-secondary);padding-bottom:26px;border-bottom:1px solid var(--border)}
+.dash-cycle b{color:var(--accent-dark);font-weight:600}
+
+.dash-block{padding:30px 0;border-bottom:1px solid var(--border)}
+.dash-block h3{font-size:11.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:18px}
+
+.dash-checkin-row{display:flex;gap:14px}
 .dash-mood{
-  flex:1;font-family:inherit;font-size:26px;cursor:pointer;background:var(--bg-surface);
-  border:1.5px solid var(--border);border-radius:16px;padding:14px 0;transition:all 200ms ease;
+  flex:1;font-family:inherit;font-size:34px;cursor:pointer;background:none;
+  border:1px solid var(--border);border-radius:18px;padding:18px 0;
+  transition:all 220ms var(--ease);
 }
-.dash-mood:active{transform:scale(0.93)}
-.dash-mood.picked{background:rgba(124,179,66,0.12);border-color:var(--accent)}
-.dash-checkin-done{font-size:15px;color:var(--text-secondary);line-height:1.6}
-.dash-checkin-done b{color:var(--text-primary)}
-.dash-meal{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border-light);cursor:pointer}
-.dash-meal:last-child{border-bottom:none}
+.dash-mood:hover{border-color:var(--accent);background:rgba(124,179,66,0.05)}
+.dash-mood:active{transform:scale(0.94)}
+.dash-mood.picked{background:rgba(124,179,66,0.1);border-color:var(--accent)}
+.dash-checkin-done{font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:17.5px;color:var(--text-secondary);line-height:1.6}
+.dash-checkin-done b{color:var(--text-primary);font-style:normal}
+
+.dash-meal{display:flex;align-items:center;gap:16px;padding:15px 0;cursor:pointer}
+.dash-meal + .dash-meal{border-top:1px solid var(--border-light, #EFEDE0)}
 .dm-check{
-  width:24px;height:24px;border-radius:8px;border:2px solid var(--border);flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;transition:all 200ms ease;
+  width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;transition:all 220ms ease;
 }
 .dm-check svg{width:13px;height:13px;stroke:#fff;stroke-width:3.5;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.dash-meal:hover .dm-check{border-color:var(--accent)}
 .dash-meal.eaten .dm-check{background:var(--accent);border-color:var(--accent)}
 .dash-meal.eaten .dm-check svg{opacity:1}
 .dm-info{flex:1;min-width:0}
-.dm-slot{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-tertiary)}
-.dm-name{font-size:15px;font-weight:600;line-height:1.3}
-.dash-meal.eaten .dm-name{color:var(--text-tertiary);text-decoration:line-through}
-.dm-protein{font-size:12.5px;font-weight:700;color:var(--accent-dark);white-space:nowrap}
-.dash-protein-track{height:10px;background:var(--bg-surface);border-radius:6px;overflow:hidden;margin-top:6px}
-.dash-protein-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,#AED581,var(--accent));transition:width 500ms var(--ease)}
-.dash-protein-label{display:flex;justify-content:space-between;font-size:13px;color:var(--text-secondary);margin-top:8px}
-.dash-protein-label b{color:var(--text-primary)}
-.dash-row{display:flex;gap:14px}
-.dash-row .dash-card{flex:1;margin-bottom:14px}
-.dash-streak-num{font-family:'Fraunces',Georgia,serif;font-size:36px;font-weight:600;color:var(--accent-dark);line-height:1}
-.dash-streak-sub{font-size:12.5px;color:var(--text-secondary);margin-top:4px}
-.dash-quick{display:flex;gap:10px;margin-top:4px}
-.dash-quick .btn{flex:1;height:46px;font-size:14px;padding:0}
-.dash-noplan{font-size:14.5px;color:var(--text-secondary);line-height:1.6}
-.dash-about{
-  text-align:center;padding:26px 0 4px;font-size:12.5px;color:var(--text-tertiary);
-}
-.dash-about button{font-family:inherit;background:none;border:none;color:var(--accent-dark);font-weight:700;font-size:12.5px;cursor:pointer;padding:0}
+.dm-slot{display:block;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:2px}
+.dm-name{display:block;font-family:'Fraunces',Georgia,serif;font-size:19px;font-weight:500;letter-spacing:-0.005em;line-height:1.25}
+.dash-meal.eaten .dm-name{color:var(--text-tertiary)}
+.dm-protein{font-size:13px;font-weight:700;color:var(--accent-dark);white-space:nowrap}
+.dash-protein-track{height:2px;background:var(--border);border-radius:2px;overflow:visible;margin-top:22px;position:relative}
+.dash-protein-fill{height:100%;border-radius:2px;background:var(--accent-dark);transition:width 600ms var(--ease)}
+.dash-protein-label{display:flex;justify-content:space-between;font-size:13px;color:var(--text-tertiary);margin-top:10px}
+.dash-protein-label b{color:var(--text-primary);font-weight:700}
+.dash-noplan{font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:17px;color:var(--text-secondary);line-height:1.6}
+
+.dash-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:26px 0 0;flex-wrap:wrap}
+.dash-streak-line{font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:16.5px;color:var(--text-secondary)}
+.dash-streak-line b{font-style:normal;font-weight:600;color:var(--accent-dark);font-size:19px}
+.dash-links{display:flex;gap:22px}
+.dash-link{font-family:inherit;background:none;border:none;cursor:pointer;padding:0;font-size:14.5px;font-weight:700;color:var(--text-primary)}
+.dash-link:hover{color:var(--accent-dark)}
+.dash-about{text-align:center;padding:34px 0 0;font-size:12.5px;color:var(--text-tertiary)}
+.dash-about button{font-family:inherit;background:none;border:none;color:var(--text-tertiary);text-decoration:underline;font-size:12.5px;cursor:pointer;padding:0}
+.dash-about button:hover{color:var(--accent-dark)}
 
 /* ---------- bottom tab bar (mobile / app) ---------- */
 .tabbar{
@@ -1103,34 +1114,28 @@ body.has-dash .hero{display:none}
     <div class="dash-greet" id="dashGreet">Good morning</div>
     <div class="dash-cycle" id="dashCycle"></div>
 
-    <div class="dash-card" id="dashCheckinCard">
+    <div class="dash-block" id="dashCheckinCard">
       <h3>Morning check-in</h3>
       <div id="dashCheckinBody"></div>
     </div>
 
-    <div class="dash-card">
-      <h3>Today's meals</h3>
+    <div class="dash-block">
+      <h3>Today's plate</h3>
       <div id="dashMeals"></div>
       <div class="dash-protein-track"><div class="dash-protein-fill" id="dashProteinFill" style="width:0%"></div></div>
-      <div class="dash-protein-label"><span><b id="dashProteinNow">0g</b> eaten</span><span>goal <b id="dashProteinGoal">—</b></span></div>
+      <div class="dash-protein-label"><span><b id="dashProteinNow">0g</b> eaten</span><span>goal <b id="dashProteinGoal">&mdash;</b></span></div>
     </div>
 
-    <div class="dash-row">
-      <div class="dash-card">
-        <h3>Streak</h3>
-        <div class="dash-streak-num" id="dashStreak">0</div>
-        <div class="dash-streak-sub">days checked in</div>
-      </div>
-      <div class="dash-card">
-        <h3>Quick actions</h3>
-        <div class="dash-quick">
-          <button class="btn btn-secondary js-plan" type="button">Plan</button>
-          <button class="btn btn-secondary js-grocery" type="button">Grocery</button>
-        </div>
-      </div>
+    <div class="dash-foot">
+      <span class="dash-streak-line"><b id="dashStreak">0</b> day streak &mdash; keep the mornings coming</span>
+      <span class="dash-links">
+        <button class="dash-link js-plan" type="button">Plan &rarr;</button>
+        <button class="dash-link js-grocery" type="button">Grocery &rarr;</button>
+        <button class="dash-link" id="dashRoomsLink" type="button">Rooms &rarr;</button>
+      </span>
     </div>
 
-    <div class="dash-about">Curious how Plate works? <button id="dashAbout" type="button">See the full site &darr;</button></div>
+    <div class="dash-about">Curious how Plate works? <button id="dashAbout" type="button">See the full site</button></div>
   </div>
 </section>
 
@@ -1771,7 +1776,7 @@ function renderDash(){
     document.getElementById('dashProteinFill').style.width = pct + '%';
     document.getElementById('dashProteinNow').textContent = eatenProtein + 'g';
   } else {
-    mealsEl.innerHTML = '<div class="dash-noplan">No plan for today yet \u2014 build your week and your meals will show up here.</div>' +
+    mealsEl.innerHTML = '<div class="dash-noplan">Nothing planned yet \u2014 your week starts with one tap.</div>' +
       '<button class="btn btn-primary js-plan" type="button" style="width:100%;margin-top:12px">Build my 7-day plan</button>';
     mealsEl.querySelector('.js-plan').addEventListener('click', function(){
       if (currentPlan) openPlan(); else openPlanBuilder();
@@ -1786,6 +1791,11 @@ function renderDash(){
   document.getElementById('dashStreak').textContent = s.count || 0;
 }
 
+var dashRoomsLink = document.getElementById('dashRoomsLink');
+if (dashRoomsLink) dashRoomsLink.addEventListener('click', function(){
+  openRooms();
+  if (typeof setActiveTab === 'function') setActiveTab('tabRooms');
+});
 document.getElementById('dashAbout').addEventListener('click', function(){
   var hero = document.querySelector('.hero');
   document.body.classList.remove('has-dash');
