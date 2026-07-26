@@ -935,7 +935,17 @@ body.seeing-site .dash{display:none}
   margin-bottom:16px;
   box-shadow:0 2px 6px rgba(32,41,26,0.04), 0 22px 50px rgba(32,41,26,0.09), inset 0 1px 0 rgba(255,255,255,0.9);
 }
-.aisle-head{display:flex;align-items:center;gap:13px;margin-bottom:8px}
+.aisle-head{display:flex;align-items:center;gap:13px;margin-bottom:8px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.aisle-chev{margin-left:auto;flex-shrink:0;width:22px;height:22px;display:flex;align-items:center;justify-content:center;transition:transform 300ms var(--ease)}
+.aisle-chev svg{width:15px;height:15px;stroke:var(--text-tertiary);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.aisle.collapsed .aisle-chev{transform:rotate(-90deg)}
+.aisle-body{display:grid;grid-template-rows:1fr;transition:grid-template-rows 380ms var(--ease)}
+.aisle.collapsed .aisle-body{grid-template-rows:0fr}
+.aisle-body-inner{overflow:hidden;min-height:0}
+.aisle.collapsed{padding-bottom:20px}
+.aisle.done-aisle .g-ic{background:rgba(124,179,66,0.18)}
+.aisle.done-aisle .g-ic svg{stroke:var(--accent-dark)}
+.aisle.done-aisle .aisle-name small{color:var(--accent-dark);font-weight:700}
 .g-ic{
   width:42px;height:42px;border-radius:14px;flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
@@ -2377,6 +2387,7 @@ var pbSubmit = document.getElementById('pbSubmit');
 var pbGoalHint = document.getElementById('pbGoalHint');
 
 var AISLE_ORDER = ['Produce','Meat & Seafood','Dairy & Eggs','Bakery','Frozen','Pantry','Other'];
+var aisleCollapsed = {};
 var AISLE_META = {
   'Produce':        { cls: 'gi-produce', svg: '<svg viewBox="0 0 24 24"><path d="M12 21c-4.5 0-7.5-3-7.5-7.5C4.5 8 8 5 12 5s7.5 3 7.5 8.5c0 4.5-3 7.5-7.5 7.5Z"/><path d="M12 5c0-1.7.8-3 2.5-3"/><path d="M9.5 11c.6 1.8 2 3.2 3.8 3.8"/></svg>' },
   'Meat & Seafood': { cls: 'gi-meat',    svg: '<svg viewBox="0 0 24 24"><path d="M6.5 12c4-5.5 9-6.5 14-6.5-1 5-2 10-6.5 14-2.5-1-5-3-7.5-7.5Z"/><path d="M6.5 12 4 14.5 6 16l-1.5 2L8 19.5l1.5-2L12 19"/><circle cx="15.5" cy="9.5" r="0.9"/></svg>' },
@@ -2807,10 +2818,14 @@ function renderGrocery(){
     if (!items || !items.length) return;
     items.sort(function(a,b){ return a.item.localeCompare(b.item); });
     var meta = AISLE_META[aisle] || AISLE_META['Other'];
-    html += '<div class="aisle"><div class="aisle-head">' +
+    var left = items.filter(function(x){ return !groceryChecked[x.item.toLowerCase().trim()]; }).length;
+    var doneAisle = left === 0;
+    var startCollapsed = aisleCollapsed.hasOwnProperty(aisle) ? aisleCollapsed[aisle] : doneAisle;
+    html += '<div class="aisle' + (startCollapsed ? ' collapsed' : '') + (doneAisle ? ' done-aisle' : '') + '" data-aisle="' + esc(aisle) + '"><div class="aisle-head">' +
       '<span class="g-ic ' + meta.cls + '">' + meta.svg + '</span>' +
-      '<span class="aisle-name">' + esc(aisle) + '<small>' + items.length + (items.length === 1 ? ' item' : ' items') + '</small></span>' +
-      '</div>';
+      '<span class="aisle-name">' + esc(aisle) + '<small class="aisle-count">' + (doneAisle ? 'All picked up \u2713' : left + ' of ' + items.length + ' left') + '</small></span>' +
+      '<span class="aisle-chev"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span>' +
+      '</div><div class="aisle-body"><div class="aisle-body-inner">';
     items.forEach(function(it){
       var key = it.item.toLowerCase().trim();
       var sub = it.count > 1 ? ('used in ' + it.count + ' meals') : (it.qtys[0] || '');
@@ -2822,7 +2837,7 @@ function renderGrocery(){
         '<a class="g-amz" href="' + walmartSearchUrl(it.item) + '" target="_blank" rel="noopener" title="Find at Walmart" aria-label="Find ' + esc(it.item) + ' at Walmart">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1-4h16l1 4"/><path d="M4 9v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9"/><path d="M9 20v-6h6v6"/></svg></a></div>';
     });
-    html += '</div>';
+    html += '</div></div></div>';
   });
 
   groceryPane.innerHTML = html;
@@ -2859,6 +2874,13 @@ function renderGrocery(){
     window.open(amazonCartUrl(mappedAsins), '_blank', 'noopener');
   });
 
+  groceryPane.querySelectorAll('.aisle-head').forEach(function(head){
+    head.addEventListener('click', function(){
+      var card = head.closest('.aisle');
+      var collapsed = card.classList.toggle('collapsed');
+      aisleCollapsed[card.getAttribute('data-aisle')] = collapsed;
+    });
+  });
   groceryPane.querySelectorAll('.g-item').forEach(function(el){
     el.addEventListener('click', function(ev){
       if (ev.target.closest('.g-amz')) return; // Amazon tap, not a check-off
@@ -2866,6 +2888,23 @@ function renderGrocery(){
       groceryChecked[k] = !groceryChecked[k];
       el.classList.toggle('done');
       savePlan();
+      var card = el.closest('.aisle');
+      if (card) {
+        var rows = card.querySelectorAll('.g-item');
+        var leftNow = card.querySelectorAll('.g-item:not(.done)').length;
+        var countEl = card.querySelector('.aisle-count');
+        if (countEl) countEl.textContent = leftNow === 0 ? 'All picked up \u2713' : leftNow + ' of ' + rows.length + ' left';
+        card.classList.toggle('done-aisle', leftNow === 0);
+        if (leftNow === 0) {
+          setTimeout(function(){
+            card.classList.add('collapsed');
+            aisleCollapsed[card.getAttribute('data-aisle')] = true;
+          }, 450);
+        } else if (card.classList.contains('collapsed')) {
+          card.classList.remove('collapsed');
+          aisleCollapsed[card.getAttribute('data-aisle')] = false;
+        }
+      }
       var m = buildGroceryItems();
       var t = Object.keys(m).length;
       var d = Object.keys(m).filter(function(x){ return groceryChecked[x]; }).length;
