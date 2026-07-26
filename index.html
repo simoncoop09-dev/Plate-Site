@@ -199,6 +199,17 @@ h3{font-size:24px;font-weight:600;line-height:1.3}
   animation:hazeDrift 26s ease-in-out infinite alternate;
 }
 @keyframes hazeDrift{from{transform:translateX(-2%)}to{transform:translateX(2%)}}
+.plate-orn{position:absolute;pointer-events:none}
+.plate-orn svg{width:100%;height:100%;display:block}
+.plate-orn circle{fill:none;stroke:#20291A;stroke-width:1.2;vector-effect:non-scaling-stroke}
+.po-rim{stroke-opacity:0.055}
+.po-well{stroke-opacity:0.045;stroke-dasharray:3 7}
+.po-1{width:min(460px,55vw);height:min(460px,55vw);top:-12%;right:-8%;animation:plateSpin 140s linear infinite}
+.po-2{width:200px;height:200px;left:-4%;top:38%;animation:plateSpin 180s linear infinite reverse}
+.po-3{width:300px;height:300px;bottom:-8%;left:30%;animation:plateSpin 160s linear infinite}
+@keyframes plateSpin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion: reduce){.po-1,.po-2,.po-3{animation:none}}
+@media(max-width:700px){.po-2,.po-3{display:none}.po-1{top:-6%;right:-22%}}
 .grain{
   position:absolute;inset:0;opacity:0.05;mix-blend-mode:multiply;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
@@ -1128,6 +1139,9 @@ body.has-dash .hero{display:none}
   <div class="hero-bg">
     <div class="haze"></div>
     <div class="sun"></div>
+    <div class="plate-orn po-1" aria-hidden="true"><svg viewBox="0 0 100 100"><circle class="po-rim" cx="50" cy="50" r="48"/><circle class="po-well" cx="50" cy="50" r="31"/></svg></div>
+    <div class="plate-orn po-2" aria-hidden="true"><svg viewBox="0 0 100 100"><circle class="po-rim" cx="50" cy="50" r="48"/><circle class="po-well" cx="50" cy="50" r="30"/></svg></div>
+    <div class="plate-orn po-3" aria-hidden="true"><svg viewBox="0 0 100 100"><circle class="po-rim" cx="50" cy="50" r="48"/><circle class="po-well" cx="50" cy="50" r="32"/></svg></div>
     <div class="grain"></div>
   </div>
   <div class="hero-inner">
