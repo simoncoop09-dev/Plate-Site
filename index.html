@@ -810,6 +810,7 @@ body.seeing-site .dash{display:none}
 .rf-ollie{background:linear-gradient(135deg,#FFB74D,#F29222)}
 .rf-jules{background:linear-gradient(135deg,#CE93D8,#A85CB8)}
 .rf-rio{background:linear-gradient(135deg,#90CAF9,#4E97E0)}
+.rf-remy{background:linear-gradient(135deg,#8FA3BF,#4B586F)}
 .room-name{font-family:'Fraunces',Georgia,serif;font-size:21px;font-weight:600;letter-spacing:-0.01em}
 .room-role{font-size:13px;color:var(--text-secondary);margin-top:1px}
 .room-desc{font-size:14.5px;color:var(--text-secondary);line-height:1.65;flex:1;margin-bottom:16px}
@@ -1304,6 +1305,7 @@ body{background:var(--bg-primary)}
 .rf-ollie{background:#C24A26 !important}
 .rf-jules{background:#1D1A14 !important}
 .rf-rio{background:#A56A14 !important}
+.rf-remy{background:#4B586F !important}
 .room-face{border-radius:14px !important;font-family:ui-monospace,monospace !important}
 
 /* dark sections + CTA: ink and terracotta, no green */
@@ -1672,6 +1674,14 @@ body{background:var(--bg-primary)}
           <div><div class="room-name">Rio</div><div class="room-role">Your Trainer · custom gym splits</div></div>
         </div>
         <p class="room-desc">Tell Rio your schedule, equipment, and goals — get a complete training split built just for you, with sets, reps, and progression, synced to your cycle. Total beginners welcome.</p>
+        <div class="room-foot"><span class="ai-tag">AI companion</span><span class="room-open">Open the room &rarr;</span></div>
+      </div>
+      <div class="card room-card js-room" data-persona="remy" role="button" tabindex="0">
+        <div class="room-top">
+          <div class="room-face rf-remy">R</div>
+          <div><div class="room-name">Remy</div><div class="room-role">On the Road &middot; travel &amp; work trips</div></div>
+        </div>
+        <p class="room-desc">Airports, hotel rooms, client dinners. Eating well on a GLP-1 when your kitchen is 400 miles away &mdash; survival orders, minifridge strategy, menu navigation.</p>
         <div class="room-foot"><span class="ai-tag">AI companion</span><span class="room-open">Open the room &rarr;</span></div>
       </div>
     </div>
@@ -3321,10 +3331,11 @@ var PERSONA_META = {
   mara:  { name: 'Mara',  role: 'Rough Days · AI companion', welcome: "Hey, I'm Mara \ud83e\udee7 Rough stomach days are my whole specialty. No pressure to eat anything right now — tell me how today's going and we'll find something that stays down." },
   ollie: { name: 'Ollie', role: 'The Gut Room · AI companion', welcome: "Hey! Ollie here. Constipation, bloating, the burps nobody warned you about — nothing you say is awkward to me. What's your gut doing?" },
   jules: { name: 'Jules', role: 'Momentum · AI companion', welcome: "Hey, I'm Jules. Plateaus, motivation dips, the scale playing games — that's my room. Where's your head at today?" },
+  remy:  { name: 'Remy',  role: 'On the Road · AI companion', welcome: "Hey, Remy here \u2708\ufe0f Airports, hotels, client dinners \u2014 eating well on the road with a GLP-1 is my whole thing. Where are you headed, or what are you stuck ordering?" },
   rio:   { name: 'Rio',   role: 'Your Trainer · AI companion', welcome: "Rio here \ud83d\udcaa I build custom training splits so the weight you lose is fat, not muscle. Give me the basics — days a week you can train, what equipment you've got, experience level, and your goal — and I'll write your program." }
 };
 var currentPersona = 'libby';
-var chatHistories = { libby: [], mara: [], ollie: [], jules: [], rio: [] };
+var chatHistories = { libby: [], mara: [], ollie: [], jules: [], rio: [], remy: [] };
 var chatHistory = chatHistories.libby;
 var chatBusy = false;
 
