@@ -2426,6 +2426,22 @@ var AMAZON_ASIN_MAP = {
   // 'cottage cheese': 'B0EXAMPLE3'
 };
 
+// WALMART_ITEM_MAP: map grocery items to Walmart product IDs to enable the
+// one-tap full-cart button. Find an ID by opening the product on walmart.com -
+// it's the number at the end of the URL: walmart.com/ip/product-name/ITEMID
+// Fill with items you've verified yourself; never guess IDs.
+// Once the Walmart affiliate (Impact Radius) account is approved, their catalog
+// API can auto-fill this map and the links can carry the commission wrapper.
+var WALMART_ITEM_MAP = {
+  // 'chicken breast': '27935840',
+  // 'greek yogurt':   '10450115'
+};
+
+function walmartCartUrl(ids){
+  // Official pattern from Walmart's affiliate docs: comma-separated IDs (qty 1)
+  return 'https://affil.walmart.com/cart/addToCart?items=' + ids.join(',');
+}
+
 function walmartSearchUrl(item){
   return 'https://www.walmart.com/search?q=' + encodeURIComponent(item);
 }
@@ -2794,8 +2810,10 @@ function renderGrocery(){
   var doneCount = Object.keys(map).filter(function(k){ return groceryChecked[k]; }).length;
 
   var mappedAsins = [];
+  var mappedWm = [];
   Object.keys(map).forEach(function(k){
     if (AMAZON_ASIN_MAP[k] && !groceryChecked[k]) mappedAsins.push(AMAZON_ASIN_MAP[k]);
+    if (WALMART_ITEM_MAP[k] && !groceryChecked[k]) mappedWm.push(WALMART_ITEM_MAP[k]);
   });
 
   var pct = total ? Math.round((doneCount / total) * 100) : 0;
@@ -2806,8 +2824,11 @@ function renderGrocery(){
     (instacartEnabled
       ? '<button class="btn btn-primary" id="gInstacart" type="button">Shop with Instacart</button>'
       : '') +
+    (mappedWm.length
+      ? '<button class="btn ' + (instacartEnabled ? 'btn-secondary' : 'btn-primary') + '" id="gWmCart" type="button">Walmart cart (' + mappedWm.length + ' items)</button>'
+      : '') +
     (mappedAsins.length
-      ? '<button class="btn ' + (instacartEnabled ? 'btn-secondary' : 'btn-primary') + '" id="gAmzCart" type="button">Amazon cart (' + mappedAsins.length + ' items)</button>'
+      ? '<button class="btn btn-secondary" id="gAmzCart" type="button">Amazon cart (' + mappedAsins.length + ' items)</button>'
       : '') +
     '<button class="g-textbtn" id="gCopy" type="button">Copy list</button>' +
     '<button class="g-textbtn" id="gReset" type="button">Uncheck all</button>' +
@@ -2869,6 +2890,11 @@ function renderGrocery(){
     });
   });
 
+  var wmBtn = document.getElementById('gWmCart');
+  if (wmBtn) wmBtn.addEventListener('click', function(){
+    window.open(walmartCartUrl(mappedWm), '_blank', 'noopener');
+    track('walmart_cart', String(mappedWm.length));
+  });
   var cartBtn = document.getElementById('gAmzCart');
   if (cartBtn) cartBtn.addEventListener('click', function(){
     window.open(amazonCartUrl(mappedAsins), '_blank', 'noopener');
