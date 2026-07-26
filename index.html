@@ -711,6 +711,26 @@ body.has-dash .hero{display:none}
 .snap-busy{display:inline-block;width:16px;height:16px;border:2px solid rgba(32,41,26,0.15);border-top-color:var(--accent-dark);border-radius:50%;animation:snapSpin 700ms linear infinite;vertical-align:-3px;margin-right:8px}
 @keyframes snapSpin{to{transform:rotate(360deg)}}
 
+/* takeout picks */
+.to-banner{font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:16px;color:var(--text-secondary);margin-bottom:22px}
+.to-banner b{font-style:normal;color:var(--accent-dark)}
+.to-rest{margin-bottom:30px}
+.to-rest-name{font-family:'Fraunces',Georgia,serif;font-size:22px;font-weight:600;letter-spacing:-0.01em;margin-bottom:2px}
+.to-rest-sub{font-size:12.5px;color:var(--text-tertiary);margin-bottom:12px}
+.to-item{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-top:1px solid var(--border)}
+.to-item:last-child{border-bottom:1px solid var(--border)}
+.to-info{flex:1;min-width:0}
+.to-name{font-size:15.5px;font-weight:700;line-height:1.35}
+.to-macros{font-size:12.5px;font-weight:700;color:var(--accent-dark);margin:2px 0 4px}
+.to-tip{font-size:13.5px;color:var(--text-secondary);line-height:1.55}
+.to-mode{font-size:9.5px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;border-radius:100px;padding:3px 8px;flex-shrink:0;margin-top:2px}
+.to-mode.gentle{background:rgba(128,203,196,0.18);color:#2E7D74}
+.to-mode.steady{background:rgba(255,183,77,0.18);color:#A8681A}
+.to-mode.strong{background:rgba(124,179,66,0.16);color:var(--accent-dark)}
+.to-order{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:var(--accent-dark);text-decoration:none;white-space:nowrap;margin-top:2px}
+.to-order:hover{text-decoration:underline}
+.to-note{font-size:12px;color:var(--text-tertiary);line-height:1.6;margin-top:26px;padding-top:16px;border-top:1px solid var(--border)}
+
 .dash-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 2px 0;flex-wrap:wrap}
 .dash-streak-line{font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:16px;color:var(--text-secondary)}
 .dash-streak-line b{font-style:normal;font-weight:600;color:var(--accent-dark);font-size:19px}
@@ -1212,6 +1232,7 @@ body.has-dash .hero{display:none}
         <button class="dash-link js-plan" type="button">Plan &rarr;</button>
         <button class="dash-link js-grocery" type="button">Grocery &rarr;</button>
         <button class="dash-link" id="dashRoomsLink" type="button">Rooms &rarr;</button>
+        <button class="dash-link" id="dashTakeoutLink" type="button">Takeout &rarr;</button>
       </span>
     </div>
 
@@ -1655,6 +1676,20 @@ body.has-dash .hero{display:none}
   </div>
 </div>
 
+<!-- TAKEOUT VIEW (app screen) -->
+<div class="plan-overlay" id="takeoutOverlay" role="dialog" aria-modal="true" aria-label="Eating out picks">
+  <div class="plan-head">
+    <div class="plan-head-title">
+      <strong>Eating out tonight?</strong>
+      <span>Hand-picked orders that work on a GLP-1 &mdash; no menu roulette</span>
+    </div>
+    <button class="plan-close" id="takeoutClose" aria-label="Close">&times;</button>
+  </div>
+  <div class="plan-body">
+    <div class="plan-inner" id="takeoutPane"></div>
+  </div>
+</div>
+
 <!-- BOTTOM TAB BAR (mobile / app) -->
 <nav class="tabbar" aria-label="App navigation">
   <div class="tabbar-inner">
@@ -1937,6 +1972,84 @@ if (snapCard && snapInput) {
   });
 }
 
+// ---- Eating out: hand-curated GLP-1-smart orders at national chains ----
+// Nutrition approximate, from each chain's published nutrition pages.
+var TAKEOUT = [
+  { rest: 'Chipotle', sub: 'Order a bowl, skip the tortilla', items: [
+    { name: 'Chicken bowl: double chicken, fajita veggies, salsa, lettuce', p: 60, c: 500, mode: 'strong', tip: 'Skip rice and cheese if fullness hits fast — the chicken is the point.' },
+    { name: 'Half chicken bowl, saved for two sittings', p: 30, c: 350, mode: 'steady', tip: 'Ask for everything on the side so round two stays fresh.' } ] },
+  { rest: 'CAVA', sub: 'Mediterranean, easy on the stomach', items: [
+    { name: 'Greens + grilled chicken + hummus bowl', p: 42, c: 520, mode: 'steady', tip: 'Tzatziki over heavy dressings — flavor without the grease.' },
+    { name: 'Harissa honey chicken pita (half now, half later)', p: 28, c: 400, mode: 'strong', tip: 'Pitas sit heavier — good appetite days only.' } ] },
+  { rest: 'sweetgreen', sub: 'Salads that are actually filling', items: [
+    { name: 'Chicken + double portion protein plate', p: 50, c: 550, mode: 'strong', tip: 'Warm bowls digest easier than raw kale for most people.' },
+    { name: 'Miso glazed salmon plate', p: 35, c: 480, mode: 'steady', tip: 'Salmon is gentle and the omega-3s are a bonus.' } ] },
+  { rest: 'Chick-fil-A', sub: 'The grilled menu is the secret menu', items: [
+    { name: 'Grilled nuggets, 12-count', p: 38, c: 200, mode: 'gentle', tip: 'Bland, soft, pure protein — the classic rough-day order.' },
+    { name: 'Grilled chicken sandwich, no bun if needed', p: 28, c: 320, mode: 'steady', tip: 'Skip the sauces on queasy days; they are where the fat hides.' } ] },
+  { rest: 'Panera', sub: 'Soup weather is every shot day', items: [
+    { name: 'Chicken noodle soup, cup + plain baguette', p: 12, c: 250, mode: 'gentle', tip: 'Warm, salty, easy down — add the baguette only if it appeals.' },
+    { name: 'Napa almond chicken salad half-sandwich + soup', p: 22, c: 420, mode: 'steady', tip: 'The half-size combo exists for exactly your appetite.' } ] },
+  { rest: 'Jersey Mike\u2019s', sub: 'Any sub, in a tub', items: [
+    { name: 'Turkey & provolone "in a tub" (no bread)', p: 35, c: 330, mode: 'steady', tip: 'Ask for it in a tub — all the filling, none of the loaf.' } ] },
+  { rest: 'El Pollo Loco', sub: 'Fire-grilled, not fried', items: [
+    { name: 'Chicken breast meal + steamed veggies', p: 36, c: 380, mode: 'steady', tip: 'Grilled chicken off the bone is one of the best fast-food proteins there is.' } ] },
+  { rest: 'Starbucks', sub: 'For the mornings nothing sounds right', items: [
+    { name: 'Egg white & red pepper egg bites', p: 12, c: 170, mode: 'gentle', tip: 'Soft, warm, small — a real option when breakfast feels impossible.' },
+    { name: 'Grande nonfat latte + egg bites', p: 24, c: 300, mode: 'gentle', tip: 'Milk protein counts. Sip slowly.' } ] }
+];
+
+var takeoutOverlay = document.getElementById('takeoutOverlay');
+var takeoutPane = document.getElementById('takeoutPane');
+function ddLink(rest){ return 'https://www.doordash.com/search/store/' + encodeURIComponent(rest); }
+function renderTakeout(){
+  var d = cycleDay();
+  var gentleFirst = d !== null && d <= 3;
+  var out = '';
+  if (gentleFirst) out += '<div class="to-banner">Cycle day <b>' + d + '</b> \u2014 gentle picks first today.</div>';
+  else out += '<div class="to-banner">Every pick here works on a GLP-1. Tap one and DoorDash shows what\u2019s near you.</div>';
+  var rests = TAKEOUT.slice();
+  if (gentleFirst) {
+    rests.sort(function(a, b){
+      var ga = a.items.some(function(i){ return i.mode === 'gentle'; }) ? 0 : 1;
+      var gb = b.items.some(function(i){ return i.mode === 'gentle'; }) ? 0 : 1;
+      return ga - gb;
+    });
+  }
+  rests.forEach(function(r){
+    out += '<div class="to-rest"><div class="to-rest-name">' + esc(r.rest) + '</div><div class="to-rest-sub">' + esc(r.sub) + '</div>';
+    var items = r.items.slice();
+    if (gentleFirst) items.sort(function(a, b){ return (a.mode === 'gentle' ? 0 : 1) - (b.mode === 'gentle' ? 0 : 1); });
+    items.forEach(function(it){
+      out += '<div class="to-item"><div class="to-info">' +
+        '<div class="to-name">' + esc(it.name) + '</div>' +
+        '<div class="to-macros">~' + it.p + 'g protein \u00b7 ~' + it.c + ' cal</div>' +
+        '<div class="to-tip">' + esc(it.tip) + '</div>' +
+        '<a class="to-order" href="' + ddLink(r.rest) + '" target="_blank" rel="noopener" data-to="' + esc(r.rest) + '">Order on DoorDash \u2192</a>' +
+        '</div><span class="to-mode ' + it.mode + '">' + it.mode + '</span></div>';
+    });
+    out += '</div>';
+  });
+  out += '<div class="to-note">Nutrition is approximate, from each restaurant\u2019s published info \u2014 menus and availability vary by location. Plate isn\u2019t affiliated with these restaurants (yet).</div>';
+  takeoutPane.innerHTML = out;
+  takeoutPane.querySelectorAll('.to-order').forEach(function(a){
+    a.addEventListener('click', function(){ track('takeout_click', a.getAttribute('data-to')); });
+  });
+}
+function openTakeout(){
+  renderTakeout();
+  takeoutOverlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  track('takeout_open');
+}
+function closeTakeout(){
+  takeoutOverlay.classList.remove('open');
+  if (!planOverlay.classList.contains('open')) document.body.style.overflow = '';
+}
+document.getElementById('takeoutClose').addEventListener('click', closeTakeout);
+var dashTakeoutLink = document.getElementById('dashTakeoutLink');
+if (dashTakeoutLink) dashTakeoutLink.addEventListener('click', openTakeout);
+
 var dashRoomsLink = document.getElementById('dashRoomsLink');
 if (dashRoomsLink) dashRoomsLink.addEventListener('click', function(){
   openRooms();
@@ -1994,7 +2107,7 @@ function setActiveTab(id){
 var tabHome = document.getElementById('tabHome');
 if (tabHome) {
   tabHome.addEventListener('click', function(){
-    closePlan(); closeChat(); closeWaitlist(); closePlanBuilder(); closeRooms();
+    closePlan(); closeChat(); closeWaitlist(); closePlanBuilder(); closeRooms(); closeTakeout();
     renderDash();
     window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
     setActiveTab('tabHome');
@@ -2132,7 +2245,7 @@ function closeWaitlist(){
 wlClose.addEventListener('click', closeWaitlist);
 wlOverlay.addEventListener('click', function(e){ if (e.target === wlOverlay) closeWaitlist(); });
 document.addEventListener('keydown', function(e){
-  if (e.key === 'Escape') { closeWaitlist(); closeDrawer(); closePlanBuilder(); closePlan(); closeRooms(); }
+  if (e.key === 'Escape') { closeWaitlist(); closeDrawer(); closePlanBuilder(); closePlan(); closeRooms(); closeTakeout(); }
 });
 document.querySelectorAll('.js-waitlist').forEach(function(btn){
   btn.addEventListener('click', function(){
