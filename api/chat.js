@@ -139,12 +139,6 @@ export default async function handler(req, res) {
       : 'One sec — sending too fast.' });
     return;
   }
-  let messages = Array.isArray(body.messages) ? body.messages.slice(-30) : [];
-  messages = messages.map(m => ({
-    role: m && m.role === 'assistant' ? 'assistant' : 'user',
-    content: String((m && m.content) || '').slice(0, 4000)
-  })).filter(m => m.content);
-  body.messages = messages;
   const ctx = typeof body.context === 'string' ? body.context.slice(0, 600) : '';
   const personaKey = (typeof body.persona === 'string' && PERSONAS[body.persona]) ? body.persona : 'libby';
   const SYSTEM_PROMPT = CORE_RULES + PERSONAS[personaKey];
